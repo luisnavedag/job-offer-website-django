@@ -9,6 +9,7 @@ djangorestframework = "*"
 django-multiselectfield = "*"
 django-phonenumber-field = "*"
 django-phonenumbers = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 
