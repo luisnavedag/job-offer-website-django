@@ -27,17 +27,17 @@ class Employee(models.Model):
         ('Other', 'Other'),
     )
 
-    user = models.ForeignKey(USER, default=1, on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(USER, on_delete=models.CASCADE, blank=True, null=True)
     skills = models.ManyToManyField('Skill', blank=True)
-    tags = models.CharField(choices=TAGS, max_length=100)
+    tags = models.CharField(choices=TAGS, max_length=100, null=True)
     city = models.CharField(max_length=200, null=True, blank=True)
     linkdin = models.URLField(max_length=200, null=True, blank=True)
-    status = models.CharField(choices=STATUS, max_length=100)
+    status = models.CharField(choices=STATUS, max_length=100, null=True)
     about_yourself = models.TextField(null=True, blank=True)
 
 
 class Skill(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     created = models.DateTimeField(auto_now_add=True)
-
 

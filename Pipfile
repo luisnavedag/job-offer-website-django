@@ -10,6 +10,8 @@ django-multiselectfield = "*"
 django-phonenumber-field = "*"
 django-phonenumbers = "*"
 djangorestframework-simplejwt = "*"
+icecream = "*"
+django-filter = "*"
 
 [dev-packages]
 
