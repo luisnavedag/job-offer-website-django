@@ -113,5 +113,5 @@ class SkillListView(generics.ListAPIView):
     serializer_class = SkillSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ('name',)
-    ordering_fields = ('name',)
+    ordering_fields = ('created',)
     search_fields = ('name',)

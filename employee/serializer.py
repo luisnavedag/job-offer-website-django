@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from .models import Employee, Skill
-from rest_framework.request import Request
-from icecream import ic
 from . import validators
 
 
@@ -20,12 +18,14 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    city = serializers.CharField(required=False, validators=[validators.validate_city])
+    id = serializers.IntegerField(required=False)
+    city = serializers.CharField(allow_null=True, required=False, validators=[validators.validate_city])
     skills = SkillSerializer(many=True, required=False)
 
     class Meta:
         model = Employee
         fields = [
+            'id',
             'user',
             'skills',
             'tags',
