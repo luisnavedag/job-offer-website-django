@@ -1,12 +1,14 @@
 from rest_framework import generics
 from .models import Employee, Skill
-from .serializer import EmployeeSerializer, SkillSerializer
+from .serializers import EmployeeSerializer, SkillSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.permissions import IsAdminUser
+from django.shortcuts import get_object_or_404
 
 
 class EmployeeCreate(APIView):
@@ -34,30 +36,26 @@ class EmployeeCreate(APIView):
 
 
 class EmployeeDetail(APIView):
-
     def get(self, request: Request, pk: int) -> Response:
-        if request.user.is_authenticated:
-            employee = Employee.objects.get(user=request.user)
-            serializer = EmployeeSerializer(employee)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        employee = Employee.objects.get(user=request.user)
+        serializer = EmployeeSerializer(employee)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, pk: int) -> Response:
-        if request.user.is_authenticated:
-            employee = Employee.objects.get(user=request.user)
+        employee = Employee.objects.get(user=request.user)
 
-            serializer = EmployeeSerializer(employee, data=request.data)
+        serializer = EmployeeSerializer(employee, data=request.data)
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request: Request, pk: int) -> Response:
-        if request.user.is_authenticated:
-            employee = Employee.objects.get(user=request.user)
-            employee.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        employee = Employee.objects.get(user=request.user)
+        employee.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SkillCreate(APIView):
@@ -72,34 +70,39 @@ class SkillCreate(APIView):
 
 
 class SkillDetail(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request: Request, pk: int) -> Response:
+        skill = self.get_object(pk)
+        serializer = SkillSerializer(skill)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request: Request, pk: int) -> Response:
+        skill = self.get_object(pk)
+
+        serializer = SkillSerializer(skill, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request: Request, pk: int) -> Response:
+        skill = self.get_object(pk)
+        skill.delete()
+        return Response({'detail': 'Deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
     @staticmethod
     def get_skill(pk: int) -> Skill:
         return Skill.objects.get(pk=pk)
 
-    def get(self, request: Request, pk: int) -> Response:
-        skill = SkillDetail.get_skill(pk)
-
-        serializer = SkillSerializer(skill)
-
-        return Response(serializer.data)
-
-    def put(self, request: Request, pk: int) -> Response:
-        skill = SkillDetail.get_skill(pk)
-        serializer = SkillSerializer(skill, data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request: Request, pk: int) -> Response:
-        skill = SkillDetail.get_skill(pk)
-        skill.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    @staticmethod
+    def get_object(pk):
+        obj = get_object_or_404(Skill, id=pk)
+        return obj
 
 
 class EmployeeListView(generics.ListAPIView):
+    # tylko employer
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
@@ -109,6 +112,8 @@ class EmployeeListView(generics.ListAPIView):
 
 
 class SkillListView(generics.ListAPIView):
+    permission_classes = [IsAdminUser]
+
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)

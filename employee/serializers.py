@@ -5,7 +5,7 @@ from . import validators
 
 class SkillSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    name = serializers.CharField()
+    name = serializers.CharField(validators=[validators.validate_skill_name_unique])
     created = serializers.DateTimeField(required=False)
 
     class Meta:

@@ -1,9 +1,16 @@
 from rest_framework import serializers
 import re
+from .models import Skill
 
 
-def validate_city(value: str) -> str:
-    """Check that the entered value include a correct city name"""
-    if not re.match(r"^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$", value):
-        raise serializers.ValidationError(f"{value} is not allowed")
-    return value
+def validate_city(city: str) -> str:
+    """Check that the entered city include a correct city name"""
+    if not re.match(r"^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$", city):
+        raise serializers.ValidationError(f"{city} is not allowed")
+    return city
+
+
+def validate_skill_name_unique(name: str):
+    if Skill.objects.filter(name=name).exists():
+        raise serializers.ValidationError(f"{name} already exists")
+    return name

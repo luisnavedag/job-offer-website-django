@@ -12,7 +12,7 @@ class APICreateSkillTestCase(APITestCase):
         """
         Create a User. Authentication has been disabled
         """
-        self.user = User.objects.create_user(
+        self.user = User.objects.create_superuser(
             username='testuser',
             password='123',
         )

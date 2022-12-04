@@ -12,11 +12,14 @@ class Employer(models.Model):
     company_size = models.IntegerField(default=0)
     website = models.CharField(max_length=200)
 
+    class Meta:
+        unique_together = [['website', 'user']]
+
 
 class Subscription(models.Model):
     employer = models.ForeignKey(Employer, default=1, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    company_size = models.IntegerField(default=30)
+    days = models.IntegerField(default=30)
     locations = models.IntegerField(default=1)
     offer_raise = models.IntegerField(default=1)
     promoting = models.BooleanField(default=False)
