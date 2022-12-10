@@ -2,18 +2,20 @@ from django.db import models
 from django.conf import settings
 from datetime import date, timedelta
 from django.contrib.auth.models import AbstractUser
+# from user.models import User
+# from django.contrib.auth.models import User
 
 
 class Employer(models.Model):
-    USER = settings.AUTH_USER_MODEL
+    # USER = get_user_model()
 
-    user = models.ForeignKey(USER, default=1, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     company_name = models.CharField(max_length=200)
     company_size = models.IntegerField(default=0)
-    website = models.CharField(max_length=200)
+    website = models.URLField(max_length=200)
 
     class Meta:
-        unique_together = [['website', 'user']]
+        unique_together = ['website', 'user']
 
 
 class Subscription(models.Model):

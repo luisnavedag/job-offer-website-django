@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from employer.models import Employer
 
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -13,3 +14,9 @@ class IsStaffOrReadOnly(permissions.BasePermission):
         if request.user.is_superuser:
             return True
         return False
+
+
+class IsEmployer(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return Employer.objects.filter(user=request.user).exists()
+

@@ -12,6 +12,7 @@ django-phonenumbers = "*"
 djangorestframework-simplejwt = "*"
 icecream = "*"
 django-filter = "*"
+django-rest-passwordreset = "*"
 
 [dev-packages]
 

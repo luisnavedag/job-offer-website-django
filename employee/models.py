@@ -1,9 +1,10 @@
 from django.db import models
 from django.conf import settings
-
+# from user.models import User
+# from django.contrib.auth.models import User
 
 class Employee(models.Model):
-    USER = settings.AUTH_USER_MODEL
+    # USER = get_user_model()
     STATUS = (
         ("Active", "I'm actively looking for a job"),
         ("Open", "Open for proposals"),
@@ -28,7 +29,7 @@ class Employee(models.Model):
     )
 
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(USER, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     skills = models.ManyToManyField('Skill', blank=True)
     tags = models.CharField(choices=TAGS, max_length=100, null=True)
     city = models.CharField(max_length=200, blank=True, null=True)

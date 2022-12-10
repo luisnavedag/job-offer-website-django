@@ -44,8 +44,11 @@ INSTALLED_APPS = [
     'employee',
     'job_offers',
     'user',
-    'API'
+    'API',
+    'django_rest_passwordreset',
 ]
+
+AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -146,3 +149,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = 'aa3d6d3ad24950'
+EMAIL_HOST_PASSWORD = '0c8de4f5946030'
+EMAIL_PORT = '2525'
+

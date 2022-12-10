@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
+from API.permissions import IsEmployer
 
 
 class EmployeeCreate(APIView):
@@ -37,12 +38,12 @@ class EmployeeCreate(APIView):
 
 class EmployeeDetail(APIView):
     def get(self, request: Request, pk: int) -> Response:
-        employee = Employee.objects.get(user=request.user)
+        employee = self.get_object(self)
         serializer = EmployeeSerializer(employee)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, pk: int) -> Response:
-        employee = Employee.objects.get(user=request.user)
+        employee = self.get_object(self)
 
         serializer = EmployeeSerializer(employee, data=request.data)
 
@@ -53,9 +54,14 @@ class EmployeeDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request: Request, pk: int) -> Response:
-        employee = Employee.objects.get(user=request.user)
+        employee = self.get_object(self)
         employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @staticmethod
+    def get_object(self):
+        obj = get_object_or_404(Employee, user=self.request.user.id)
+        return obj
 
 
 class SkillCreate(APIView):
@@ -102,7 +108,8 @@ class SkillDetail(APIView):
 
 
 class EmployeeListView(generics.ListAPIView):
-    # tylko employer
+    permission_classes = [IsEmployer]
+
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
