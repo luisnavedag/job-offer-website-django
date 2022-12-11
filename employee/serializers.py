@@ -1,11 +1,14 @@
 from rest_framework import serializers
 from .models import Employee, Skill
 from . import validators
+from user.models import User
+from icecream import ic
+from employer.models import Employer
 
 
 class SkillSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    name = serializers.CharField(validators=[validators.validate_skill_name_unique])
+    name = serializers.CharField()
     created = serializers.DateTimeField(required=False)
 
     class Meta:
@@ -16,9 +19,14 @@ class SkillSerializer(serializers.ModelSerializer):
             'created'
         ]
 
+    def create(self, validated_data):
+        Skill.objects.get_or_create(name=validated_data.get('name'))
+        return Skill.objects.get(name=validated_data.get('name'))
+
 
 class EmployeeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    user = serializers.SerializerMethodField()
     city = serializers.CharField(allow_null=True, required=False, validators=[validators.validate_city])
     skills = SkillSerializer(many=True, required=False)
 
@@ -67,3 +75,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+    def get_user(self, obj):
+        return User.objects.get(email=obj.user).id

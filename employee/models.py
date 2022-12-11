@@ -3,8 +3,8 @@ from django.conf import settings
 # from user.models import User
 # from django.contrib.auth.models import User
 
+
 class Employee(models.Model):
-    # USER = get_user_model()
     STATUS = (
         ("Active", "I'm actively looking for a job"),
         ("Open", "Open for proposals"),

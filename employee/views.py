@@ -10,33 +10,28 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
 from API.permissions import IsEmployer
+from employer.models import Employer
 
 
 class EmployeeCreate(APIView):
+    """
+    Creating a profile for an employee based on the logged-in user
+    """
     def post(self, request: Request) -> Response:
-        data = {
-            "user": self.request.user.id,
-            "tags": request.data.get('tags', None),
-            "city": request.data.get('city', None),
-            "linkdin": request.data.get('linkdin', None),
-            "status": request.data.get('status', None),
-            "about_yourself": request.data.get('about_yourself', None),
-        }
+        if Employer.objects.filter(user=request.user).exists():
+            data = {'message': 'User already assigned as Employer'}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        serializer = EmployeeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
 
-        skills = request.data.get('skills', None)
-        if skills:
-            data['skills'] = skills
-
-        serializer = EmployeeSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class EmployeeDetail(APIView):
+    """
+    Operations on the employee profile
+    """
     def get(self, request: Request, pk: int) -> Response:
         employee = self.get_object(self)
         serializer = EmployeeSerializer(employee)
@@ -47,11 +42,9 @@ class EmployeeDetail(APIView):
 
         serializer = EmployeeSerializer(employee, data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request: Request, pk: int) -> Response:
         employee = self.get_object(self)
@@ -65,17 +58,21 @@ class EmployeeDetail(APIView):
 
 
 class SkillCreate(APIView):
+    """
+    Create a new skill
+    """
     def post(self, request: Request) -> Response:
         serializer = SkillSerializer(data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SkillDetail(APIView):
+    """
+    Operations for skills
+    """
     permission_classes = [IsAdminUser]
 
     def get(self, request: Request, pk: int) -> Response:
@@ -87,19 +84,14 @@ class SkillDetail(APIView):
         skill = self.get_object(pk)
 
         serializer = SkillSerializer(skill, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request: Request, pk: int) -> Response:
         skill = self.get_object(pk)
         skill.delete()
         return Response({'detail': 'Deleted.'}, status=status.HTTP_204_NO_CONTENT)
-
-    @staticmethod
-    def get_skill(pk: int) -> Skill:
-        return Skill.objects.get(pk=pk)
 
     @staticmethod
     def get_object(pk):
@@ -108,6 +100,9 @@ class SkillDetail(APIView):
 
 
 class EmployeeListView(generics.ListAPIView):
+    """
+    Ordering, filtering, searching for employees
+    """
     permission_classes = [IsEmployer]
 
     queryset = Employee.objects.all()
@@ -119,6 +114,9 @@ class EmployeeListView(generics.ListAPIView):
 
 
 class SkillListView(generics.ListAPIView):
+    """
+    Ordering, filtering, searching for skills
+    """
     permission_classes = [IsAdminUser]
 
     queryset = Skill.objects.all()

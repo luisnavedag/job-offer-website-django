@@ -1,13 +1,8 @@
 from django.db import models
 from django.conf import settings
-from datetime import date, timedelta
-from django.contrib.auth.models import AbstractUser
-# from user.models import User
-# from django.contrib.auth.models import User
 
 
 class Employer(models.Model):
-    # USER = get_user_model()
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     company_name = models.CharField(max_length=200)

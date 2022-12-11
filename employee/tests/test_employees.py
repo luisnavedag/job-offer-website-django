@@ -3,6 +3,7 @@ from rest_framework import status
 from user.models import User
 from employee.models import Skill, Employee
 from employer.models import Employer
+from icecream import ic
 
 
 class APIFilterSearchEmployeesTestCase(APITestCase):
@@ -92,7 +93,13 @@ class APIFilterSearchEmployeesTestCase(APITestCase):
         """
         Create data for testing
         """
+        user_1 = User.objects.create_user(
+            username='testuser1',
+            password='123',
+            email='test1@test.com'
+        )
         instance_1 = Employee.objects.create(
+            user=user_1,
             tags="Marketing",
             city="London",
             linkdin="www.test.com",
@@ -103,7 +110,13 @@ class APIFilterSearchEmployeesTestCase(APITestCase):
         s1.save()
         instance_1.skills.add(s1)
 
+        user_2 = User.objects.create_user(
+            username='testuser2',
+            password='123',
+            email='test2@test.com'
+        )
         instance_2 = Employee.objects.create(
+            user=user_2,
             tags="Sales",
             city="Amsterdam",
             linkdin="www.test1.com",
