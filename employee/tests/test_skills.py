@@ -1,7 +1,8 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
-from django.contrib.auth.models import User
+from user.models import User
 from employee.models import Skill
+from icecream import ic
 
 
 class APIFilterSearchSkillsTestCase(APITestCase):
@@ -14,6 +15,7 @@ class APIFilterSearchSkillsTestCase(APITestCase):
             username='testuser',
             password='123',
         )
+        # self.user.is_active = True
         self.client.force_authenticate(self.user)
 
     def test_get_all_data(self):
