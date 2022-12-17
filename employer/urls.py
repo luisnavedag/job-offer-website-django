@@ -5,5 +5,5 @@ from . import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'employer', views.EmployerDetail, basename='employer-detail')
+router.register(r'employer', views.EmployerDetail, basename='employer')
 urlpatterns = router.urls

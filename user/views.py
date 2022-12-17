@@ -32,7 +32,7 @@ class UserActivationView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request) -> Response:
-        timestamp = float(request.query_params.get('timestamp'))
+        timestamp = float(request.query_params.get('expiration_timestamp'))
         timestamp_now = self._get_timestamp()
 
         if timestamp < timestamp_now:

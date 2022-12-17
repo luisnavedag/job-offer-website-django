@@ -27,7 +27,7 @@ class EmployerDetail(viewsets.GenericViewSet):
     def retrieve(self, request, pk=None):
         instance = self.get_object()
         serializer = self.serializer_class(instance)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
         instance = self.get_object()
@@ -36,12 +36,13 @@ class EmployerDetail(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(user=self.request.user)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk=None):
         instance = self.get_object()
         instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        data = {'message': 'Employer has been removed'}
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
 
     def get_object(self):
         obj = get_object_or_404(Employer, user=self.request.user.id)

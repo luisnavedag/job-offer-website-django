@@ -85,7 +85,7 @@ class APIDetailEmployeeTestCase(APITestCase):
 
     def test_delete_employee(self):
         """
-        Test deleting employee
+        Testing the removal of the employee and the user that will be removed automatically via signals
         """
         Employee.objects.create(user=self.user)
 
@@ -93,3 +93,4 @@ class APIDetailEmployeeTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(Employee.objects.all()), 0)
+        self.assertEqual(len(User.objects.all()), 0)

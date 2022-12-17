@@ -47,7 +47,7 @@ class SendEmailNewUser(SendEmail):
         return EmailMessage('Activate your account', self.body, to=[self.data['email']])
 
     def _get_body(self) -> str:
-        url = f"{reverse('activate_register')}?id={self.data['id']}&timestamp={self._get_timestamp()}"
+        url = f"{reverse('activate_register')}?id={self.data['id']}&expiration_timestamp={self._get_timestamp()}"
         return f'''\
         <html>
         <body>
