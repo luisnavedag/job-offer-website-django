@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
-# from user.models import User
-# from django.contrib.auth.models import User
+from API.models import CommonItem
 
 
 class Employee(models.Model):
@@ -28,7 +27,6 @@ class Employee(models.Model):
         ('Other', 'Other'),
     )
 
-    id = models.AutoField(primary_key=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     skills = models.ManyToManyField('Skill', blank=True)
     tags = models.CharField(choices=TAGS, max_length=100, null=True)
@@ -38,7 +36,5 @@ class Employee(models.Model):
     about_yourself = models.TextField(null=True, blank=True)
 
 
-class Skill(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    created = models.DateTimeField(auto_now_add=True)
-
+class Skill(CommonItem):
+    pass

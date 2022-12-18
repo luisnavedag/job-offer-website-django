@@ -1,10 +1,16 @@
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import EmployerSerializer
-from .models import Employer
+from .serializers import EmployerSerializer, SubscriptionSerializer
+from .models import Employer, Subscription
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from employee.models import Employee
+from rest_framework import generics
+from API.permissions import IsEmployer
+from rest_framework.views import APIView
+from rest_framework.request import Request
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 
 
 class EmployerDetail(viewsets.GenericViewSet):
@@ -47,3 +53,34 @@ class EmployerDetail(viewsets.GenericViewSet):
     def get_object(self):
         obj = get_object_or_404(Employer, user=self.request.user.id)
         return obj
+
+
+class SubscriptionCreate(APIView):
+    """
+    Creating a subscription for a logged-in employer
+    """
+    permission_classes = [IsEmployer]
+
+    def post(self, request: Request) -> Response:
+        serializer = SubscriptionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class SubscriptionList(generics.ListAPIView):
+    """
+    Return subscription list. Ability to add appropriate filters
+    """
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsEmployer]
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ('type',)
+    ordering_fields = ('created', 'type', 'first_day', 'last_day')
+    ordering = ['created']
+
+    def get_queryset(self):
+        queryset = Subscription.objects.filter(employer__user=self.request.user)
+        return queryset

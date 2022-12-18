@@ -2,6 +2,11 @@ from django.db import models
 from employer.models import Subscription
 from phonenumber_field.modelfields import PhoneNumberField
 from employee.models import Skill
+from API.models import CommonItem
+
+
+class City(CommonItem):
+    pass
 
 
 class JobOffer(models.Model):
@@ -57,9 +62,10 @@ class JobOffer(models.Model):
         ('Internship', 'Internship'),
     )
 
-    subscription = models.ForeignKey(Subscription, null=True, on_delete=models.SET_NULL)
+    subscription = models.ForeignKey(Subscription, null=True, on_delete=models.CASCADE)
     skills = models.ManyToManyField('employee.Skill', blank=True)
     skills_nice_to_have = models.ManyToManyField('employee.Skill', blank=True, related_name='skills_nice_to_have')
+    city = models.ManyToManyField('City')
     tags = models.CharField(choices=TAGS, max_length=100)
     workplace = models.CharField(max_length=100)
     experience = models.CharField(choices=EXPERIENCE, max_length=100)
@@ -68,8 +74,7 @@ class JobOffer(models.Model):
     salary_up_to = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     currency = models.CharField(choices=CURRENCY, max_length=100)
     job_description = models.TextField()
-    city = models.CharField(max_length=200)
-    addres = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
     operationg_mode = models.CharField(choices=OPERATING_MODE, max_length=100)
     working_time = models.CharField(choices=WORKING_TIME, max_length=100)
     remote_recruitment = models.BooleanField(null=True, blank=True)
@@ -78,8 +83,8 @@ class JobOffer(models.Model):
     contact_name = models.CharField(max_length=200)
     contact_email = models.EmailField(max_length=200)
     contact_phone = PhoneNumberField(null=True, blank=True)
-    # offer_paid_off
     created = models.DateTimeField(auto_now_add=True)
+    verified = models.BooleanField(default=False)
 
 
 
