@@ -3,7 +3,6 @@ from .models import Employer, Subscription, Payment
 from user.models import User
 from .static import *
 from datetime import timedelta
-from icecream import ic
 
 
 class EmployerSerializer(serializers.ModelSerializer):
@@ -28,14 +27,14 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'id',
             'employer',
             'payment',
-            'type', #
+            'type',
             'days',
             'locations',
             'offer_raise',
             'promoting',
             'customer_care',
             'created',
-            'first_day', #
+            'first_day',
             'last_day',
         ]
 
@@ -65,9 +64,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         match ad_type:
             case 'Standard':
                 return Standard
-            case 'Bussiness':
-                return Bussiness
-            case 'PRO':
+            case 'Business':
+                return Business
+            case 'Pro':
                 return Pro
             case 'Enterprise':
                 return Enterprise

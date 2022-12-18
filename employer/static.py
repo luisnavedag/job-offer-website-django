@@ -14,7 +14,7 @@ class Standard(Enum):
     CUSTOMER_CARE = False
 
 
-class Bussiness(Enum):
+class Business(Enum):
     """
     The component fields have values for a business subscription
     """

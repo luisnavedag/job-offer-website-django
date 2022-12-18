@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-import uuid
 
 
 class Employer(models.Model):
@@ -31,8 +30,8 @@ class Subscription(models.Model):
 
     TYPE = (
         ("Standard", "Standard"),
-        ("Bussiness", "Bussiness"),
-        ("PRO", "PRO"),
+        ("Business", "Business"),
+        ("Pro", "Pro"),
         ("Enterprise", "Enterprise"),
     )
 

@@ -20,7 +20,7 @@ class EmployerDetail(viewsets.GenericViewSet):
     queryset = Employer.objects.all()
     serializer_class = EmployerSerializer
 
-    def create(self, request):
+    def create(self, request) -> Response:
         if Employee.objects.filter(user=request.user).exists():
             data = {'message': 'User already assigned as Employee'}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
@@ -30,12 +30,12 @@ class EmployerDetail(viewsets.GenericViewSet):
         serializer.save(user=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None) -> Response:
         instance = self.get_object()
         serializer = self.serializer_class(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, pk=None):
+    def update(self, request, pk=None) -> Response:
         instance = self.get_object()
         serializer = self.serializer_class(instance, data=request.data)
 
@@ -44,7 +44,7 @@ class EmployerDetail(viewsets.GenericViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, pk=None):
+    def destroy(self, request, pk=None) -> Response:
         instance = self.get_object()
         instance.delete()
         data = {'message': 'Employer has been removed'}
@@ -76,10 +76,11 @@ class SubscriptionList(generics.ListAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = [IsEmployer]
+
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ('type',)
     ordering_fields = ('created', 'type', 'first_day', 'last_day')
-    ordering = ['created']
+    ordering = ['last_day']
 
     def get_queryset(self):
         queryset = Subscription.objects.filter(employer__user=self.request.user)

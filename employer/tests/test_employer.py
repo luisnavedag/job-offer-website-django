@@ -34,17 +34,10 @@ def test_create_employer(api_client_with_credentials, create_user):
 
 
 @pytest.mark.django_db
-def test_retrieve_employer(api_client_with_credentials, create_user):
+def test_retrieve_employer(api_client_with_credentials, create_employer):
     """
     Test getting data for authenticated user
     """
-    Employer.objects.create(
-        user=create_user,
-        company_name='test',
-        company_size=1,
-        website='https://test.pl/',
-    )
-
     url = reverse('employer-list')
 
     response = api_client_with_credentials.get(url + '1/')
@@ -77,17 +70,10 @@ def test_update_employer(api_client_with_credentials, create_user):
 
 
 @pytest.mark.django_db
-def test_remove_employer(api_client_with_credentials, create_user):
+def test_remove_employer(api_client_with_credentials, create_employer):
     """
     Testing the removal of the employer and the user that will be removed automatically via signals
     """
-    Employer.objects.create(
-        user=create_user,
-        company_name='test',
-        company_size=1,
-        website='https://test.pl/',
-    )
-
     url = reverse('employer-list')
 
     response = api_client_with_credentials.delete(url + '1/')
