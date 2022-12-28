@@ -2,21 +2,15 @@ from rest_framework import serializers
 from .models import Employee, Skill
 from . import validators
 from user.models import User
-from icecream import ic
-from employer.models import Employer
 
 
 class SkillSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
     name = serializers.CharField()
-    created = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Skill
         fields = [
-            'id',
             'name',
-            'created'
         ]
 
     def create(self, validated_data):
@@ -58,7 +52,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.skills.clear()
-
+        # todo nie nalezy usuwac skills tylko przepisac z bazy
         if validated_data.get('skills', None):
             skills = validated_data.pop('skills')
             for skill in skills:

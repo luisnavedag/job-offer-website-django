@@ -1,7 +1,5 @@
 from django.db import models
-from employer.models import Subscription
 from phonenumber_field.modelfields import PhoneNumberField
-from employee.models import Skill
 from API.models import CommonItem
 
 
@@ -62,17 +60,16 @@ class JobOffer(models.Model):
         ('Internship', 'Internship'),
     )
 
-    subscription = models.ForeignKey(Subscription, null=True, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
     skills = models.ManyToManyField('employee.Skill', blank=True)
     skills_nice_to_have = models.ManyToManyField('employee.Skill', blank=True, related_name='skills_nice_to_have')
-    city = models.ManyToManyField('City')
+    cities = models.ManyToManyField('City')
     tags = models.CharField(choices=TAGS, max_length=100)
-    workplace = models.CharField(max_length=100)
     experience = models.CharField(choices=EXPERIENCE, max_length=100)
     form_of_employment = models.CharField(choices=FORM_OF_EMPLOYMENT, max_length=100)
-    salary_from = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    salary_up_to = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    currency = models.CharField(choices=CURRENCY, max_length=100)
+    salary_from = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    salary_up_to = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    currency = models.CharField(choices=CURRENCY, max_length=100, blank=True)
     job_description = models.TextField()
     address = models.CharField(max_length=200)
     operationg_mode = models.CharField(choices=OPERATING_MODE, max_length=100)
@@ -84,7 +81,9 @@ class JobOffer(models.Model):
     contact_email = models.EmailField(max_length=200)
     contact_phone = PhoneNumberField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
+    activated = models.BooleanField(default=False)
 
 
 

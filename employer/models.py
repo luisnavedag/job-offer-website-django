@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from job_offers.models import JobOffer
 
 
 class Employer(models.Model):
@@ -35,8 +36,9 @@ class Subscription(models.Model):
         ("Enterprise", "Enterprise"),
     )
 
-    employer = models.ForeignKey(Employer, default=1, on_delete=models.SET_NULL, blank=True, null=True)
+    employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, blank=True, null=True)
     payment = models.OneToOneField(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    job_offer = models.ForeignKey(JobOffer, on_delete=models.SET_NULL, blank=True, null=True)
     type = models.CharField(choices=TYPE, max_length=100)
     days = models.IntegerField(default=30)
     locations = models.IntegerField(default=1)

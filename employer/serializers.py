@@ -3,6 +3,7 @@ from .models import Employer, Subscription, Payment
 from user.models import User
 from .static import *
 from datetime import timedelta
+from job_offers.models import JobOffer
 
 
 class EmployerSerializer(serializers.ModelSerializer):
@@ -27,6 +28,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'id',
             'employer',
             'payment',
+            'job_offer',
             'type',
             'days',
             'locations',
@@ -40,15 +42,21 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         type_obj = self._get_enum(validated_data['type'])
+
         employer = Employer.objects.get(user=validated_data['user'])
+
         payment = Payment.objects.create(
             amount=type_obj.PRICE.value,
             status='UNPAID'
         )
+
+        job_offer = JobOffer.objects.create()
         last_day = validated_data['first_day'] + timedelta(days=30)
-        return Subscription.objects.create(
+
+        instance = Subscription.objects.create(
             employer=employer,
             payment=payment,
+            job_offer=job_offer,
             type=validated_data['type'],
             days=type_obj.DAYS.value,
             locations=type_obj.LOCATIONS.value,
@@ -58,6 +66,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             first_day=validated_data['first_day'],
             last_day=last_day
         )
+        return instance
 
     @staticmethod
     def _get_enum(ad_type: str):
@@ -70,3 +79,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 return Pro
             case 'Enterprise':
                 return Enterprise
+
