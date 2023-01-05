@@ -7,59 +7,60 @@ class City(CommonItem):
     pass
 
 
+TAGS = (
+    ('Marketing', 'Marketing'),
+    ('Sales', 'Sales'),
+    ('Finances', 'Finances'),
+    ('Engineering', 'Engineering'),
+    ('Design', 'Design'),
+    ('HR', 'HR'),
+    ('Consulting', 'Consulting'),
+    ('BI & Data', 'BI & Data'),
+    ('SEO', 'SEO'),
+    ('PM', 'PM'),
+    ('Media', 'Media'),
+    ('Support', 'Support'),
+    ('Logistic', 'Logistic'),
+    ('Other', 'Other'),
+)
+
+EXPERIENCE = (
+    ('Internship/Junior', 'Internship/Junior'),
+    ('Mid', 'Mid'),
+    ('Senior', 'Senior'),
+    ('Manager/C level', 'Manager/C level'),
+)
+
+FORM_OF_EMPLOYMENT = (
+    ('Fixed-term contract', 'Fixed-term contract'),
+    ('Full-time', 'Full-time'),
+    ('Part-time', 'Part-time'),
+    ('Self-employment', 'Self-employment'),
+    ('Internship employment', 'Internship employment'),
+)
+
+CURRENCY = (
+    ('GBP', 'GBP'),
+    ('EUR', 'EUR'),
+    ('CHF', 'CHF'),
+    ('USD', 'USD'),
+    ('PLN', 'PLN'),
+)
+
+OPERATING_MODE = (
+    ('Remote work', 'Remote work'),
+    ('Hybrid work', 'Hybrid work'),
+    ('On site', 'On site'),
+)
+
+WORKING_TIME = (
+    ('Full time', 'Full time'),
+    ('Part time', 'Part time'),
+    ('Internship', 'Internship'),
+)
+
+
 class JobOffer(models.Model):
-    TAGS = (
-        ('Marketing', 'Marketing'),
-        ('Sales', 'Sales'),
-        ('Finances', 'Finances'),
-        ('Engineering', 'Engineering'),
-        ('Design', 'Design'),
-        ('HR', 'HR'),
-        ('Consulting', 'Consulting'),
-        ('BI & Data', 'BI & Data'),
-        ('SEO', 'SEO'),
-        ('PM', 'PM'),
-        ('Media', 'Media'),
-        ('Support', 'Support'),
-        ('Logistic', 'Logistic'),
-        ('Other', 'Other'),
-    )
-
-    EXPERIENCE = (
-        ('Internship/Junior', 'Internship/Junior'),
-        ('Mid', 'Mid'),
-        ('Senior', 'Senior'),
-        ('Manager/C level', 'Manager/C level'),
-    )
-
-    FORM_OF_EMPLOYMENT = (
-        ('Fixed-term contract', 'Fixed-term contract'),
-        ('Full-time', 'Full-time'),
-        ('Part-time', 'Part-time'),
-        ('Self-employment', 'Self-employment'),
-        ('Internship employment', 'Internship employment'),
-    )
-
-    CURRENCY = (
-        ('GBP', 'GBP'),
-        ('EUR', 'EUR'),
-        ('CHF', 'CHF'),
-        ('USD', 'USD'),
-        ('PLN', 'PLN'),
-    )
-
-    OPERATING_MODE = (
-        ('Remote work', 'Remote work'),
-        ('Hybrid work', 'Hybrid work'),
-        ('On site', 'On site'),
-    )
-
-    WORKING_TIME = (
-        ('Full time', 'Full time'),
-        ('Part time', 'Part time'),
-        ('Internship', 'Internship'),
-    )
-
     title = models.CharField(max_length=200)
     skills = models.ManyToManyField('employee.Skill', blank=True)
     skills_nice_to_have = models.ManyToManyField('employee.Skill', blank=True, related_name='skills_nice_to_have')
@@ -84,6 +85,3 @@ class JobOffer(models.Model):
     modified = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
     activated = models.BooleanField(default=False)
-
-
-

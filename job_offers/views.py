@@ -1,13 +1,15 @@
-from rest_framework import generics
-from API.permissions import IsEmployer, IsJobOfferCreator
-from .models import JobOffer
-from .serializers import JobOfferSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework import status, generics
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from datetime import datetime
+from API.permissions import IsEmployer, IsJobOfferCreator
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from employer.models import Subscription
+from .models import JobOffer
+from .serializers import JobOfferSerializer
+from .filters import JobOfferFilter
+from datetime import datetime
 
 
 class JobOfferDetail(generics.UpdateAPIView):
@@ -44,3 +46,30 @@ class JobOfferVerification(APIView):
     @staticmethod
     def _get_timestamp():
         return datetime.utcnow().timestamp()
+
+
+class JobOfferListView(generics.ListAPIView):
+    """
+    List of available job offers. Offers can be filtered accordingly
+    """
+    permission_classes = [AllowAny]
+
+    queryset = JobOffer.objects.all()
+    serializer_class = JobOfferSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = JobOfferFilter
+
+    def get_queryset(self):
+        """
+        The function returns offers that have valid subscriptions
+        """
+        subscriptions = Subscription.get_valid_subscriptions()
+        return JobOffer.objects.filter(id__in=[subscription.job_offer.id for subscription in subscriptions])
+
+    def list(self, request, *args, **kwargs):
+        """
+        Offers will be sorted based on bids before sending the request
+        """
+        response = super().list(request, *args, **kwargs)
+        response.data = sorted(response.data, key=lambda x: x['days_to_raise'])
+        return response

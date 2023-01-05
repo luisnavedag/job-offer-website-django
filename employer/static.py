@@ -12,6 +12,7 @@ class Standard(Enum):
     OFFER_RAISE = 1
     PROMOTING = False
     CUSTOMER_CARE = False
+    DAYS_FOR_RAISED = [0, 15]
 
 
 class Business(Enum):
@@ -24,6 +25,7 @@ class Business(Enum):
     OFFER_RAISE = 2
     PROMOTING = True
     CUSTOMER_CARE = False
+    DAYS_FOR_RAISED = [0, 10, 20]
 
 
 class Pro(Enum):
@@ -36,6 +38,7 @@ class Pro(Enum):
     OFFER_RAISE = 3
     PROMOTING = True
     CUSTOMER_CARE = True
+    DAYS_FOR_RAISED = [0, 7, 14, 21]
 
 
 class Enterprise(Enum):
@@ -48,3 +51,4 @@ class Enterprise(Enum):
     OFFER_RAISE = 5
     PROMOTING = True
     CUSTOMER_CARE = True
+    DAYS_FOR_RAISED = [0, 5, 10, 15, 20, 25]

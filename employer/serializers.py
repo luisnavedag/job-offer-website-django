@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Employer, Subscription, Payment
 from user.models import User
 from .static import *
-from datetime import timedelta
+from datetime import timedelta, date
 from job_offers.models import JobOffer
 
 
@@ -68,6 +68,13 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         )
         return instance
 
+    def validate_first_day(self, value):
+        if value < date.today():
+            raise serializers.ValidationError("The first day of displaying the offer cannot be less than today's date")
+        if value > date.today() + timedelta(days=60):
+            raise serializers.ValidationError("The first day of displaying the offer cannot be longer than 2 months")
+        return value
+
     @staticmethod
     def _get_enum(ad_type: str):
         match ad_type:
@@ -79,4 +86,3 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 return Pro
             case 'Enterprise':
                 return Enterprise
-

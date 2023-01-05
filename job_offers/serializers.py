@@ -3,9 +3,9 @@ from job_offers.models import JobOffer, City
 from employee.serializers import SkillSerializer
 from employee.models import Skill
 from django.db.models import Model
-from employer.models import Subscription
-from itertools import product
 from .email_service import SendEmailJobOfferVerification
+from employer.offer_raise_service import *
+from itertools import product
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -24,10 +24,35 @@ class JobOfferSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True, required=False)
     skills_nice_to_have = SkillSerializer(many=True, required=False)
     cities = CitySerializer(many=True, required=True)
+    days_to_raise = serializers.SerializerMethodField()
 
     class Meta:
         model = JobOffer
-        exclude = ('verified',)
+        fields = [
+            'id',
+            'skills',
+            'skills_nice_to_have',
+            'cities',
+            'days_to_raise',
+            'title',
+            'tags',
+            'experience',
+            'form_of_employment',
+            'salary_from',
+            'salary_up_to',
+            'currency',
+            'job_description',
+            'address',
+            'operationg_mode',
+            'working_time',
+            'remote_recruitment',
+            'information_clause',
+            'employee_clause',
+            'contact_name',
+            'contact_email',
+            'contact_phone',
+            'days_to_raise',
+        ]
 
     def update(self, instance: JobOffer, validated_data: dict) -> JobOffer:
 
@@ -79,11 +104,29 @@ class JobOfferSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'The number of cities cannot be greater than the number of locations in the subscription.'
             )
+
         if data.get('skills', None) and data.get('skills_nice_to_have', None) and self._validation_of_unique_skills(data):
             raise serializers.ValidationError(
                 'Skills and skills nice to have cannot contain the same elements.'
             )
+
         return data
+
+    def get_days_to_raise(self, obj):
+        """
+        The days_to_raise field will be created accordingly before sending the request
+        """
+        subscription_obj = Subscription.objects.get(id=obj.id)
+
+        match subscription_obj.type:
+            case 'Standard':
+                return GetTheClosestDate(GetRaisedDateStandard(subscription_obj.first_day)).get_days_from_raised()
+            case 'Business':
+                return GetTheClosestDate(GetRaisedDateBusiness(subscription_obj.first_day)).get_days_from_raised()
+            case 'Pro':
+                return GetTheClosestDate(GetRaisedDatePro(subscription_obj.first_day)).get_days_from_raised()
+            case 'Enterprise':
+                return GetTheClosestDate(GetRaisedDateEnterprise(subscription_obj.first_day)).get_days_from_raised()
 
     @staticmethod
     def _validation_of_unique_skills(data: dict) -> bool:

@@ -1,8 +1,6 @@
 import pytest
 from django.urls import reverse
-from ..models import Employer
-from user.models import User
-from icecream import ic
+from datetime import date, timedelta
 
 
 @pytest.mark.django_db
@@ -11,9 +9,11 @@ def test_create_standard_subscription(api_client_with_credentials, create_employ
     Test adding a subscription for a standard type
     """
     url = reverse('subscription')
+    first_day = get_date(0)
+    last_day = get_date(30)
     data = {
         'type': 'Standard',
-        'first_day': '2023-01-01'
+        'first_day': first_day
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == 201
@@ -24,8 +24,8 @@ def test_create_standard_subscription(api_client_with_credentials, create_employ
     assert response.data['offer_raise'] == 1
     assert response.data['promoting'] is False
     assert response.data['customer_care'] is False
-    assert response.data['first_day'] == '2023-01-01'
-    assert response.data['last_day'] == '2023-01-31'
+    assert response.data['first_day'] == first_day
+    assert response.data['last_day'] == last_day
 
 
 @pytest.mark.django_db
@@ -34,9 +34,11 @@ def test_create_business_subscription(api_client_with_credentials, create_employ
     Test adding a subscription for a business type
     """
     url = reverse('subscription')
+    first_day = get_date(0)
+    last_day = get_date(30)
     data = {
         'type': 'Business',
-        'first_day': '2022-12-20'
+        'first_day': first_day
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == 201
@@ -47,8 +49,8 @@ def test_create_business_subscription(api_client_with_credentials, create_employ
     assert response.data['offer_raise'] == 2
     assert response.data['promoting'] is True
     assert response.data['customer_care'] is False
-    assert response.data['first_day'] == '2022-12-20'
-    assert response.data['last_day'] == '2023-01-19'
+    assert response.data['first_day'] == first_day
+    assert response.data['last_day'] == last_day
 
 
 @pytest.mark.django_db
@@ -57,9 +59,11 @@ def test_create_pro_subscription(api_client_with_credentials, create_employer):
     Test adding a subscription for a Pro type
     """
     url = reverse('subscription')
+    first_day = get_date(0)
+    last_day = get_date(30)
     data = {
         'type': 'Pro',
-        'first_day': '2023-02-01'
+        'first_day': first_day
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == 201
@@ -70,8 +74,8 @@ def test_create_pro_subscription(api_client_with_credentials, create_employer):
     assert response.data['offer_raise'] == 3
     assert response.data['promoting'] is True
     assert response.data['customer_care'] is True
-    assert response.data['first_day'] == '2023-02-01'
-    assert response.data['last_day'] == '2023-03-03'
+    assert response.data['first_day'] == first_day
+    assert response.data['last_day'] == last_day
 
 
 @pytest.mark.django_db
@@ -80,9 +84,11 @@ def test_create_enterprise_subscription(api_client_with_credentials, create_empl
     Test adding a subscription for an Enterprise type
     """
     url = reverse('subscription')
+    first_day = get_date(0)
+    last_day = get_date(30)
     data = {
         'type': 'Enterprise',
-        'first_day': '2023-12-31'
+        'first_day': first_day
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == 201
@@ -93,8 +99,8 @@ def test_create_enterprise_subscription(api_client_with_credentials, create_empl
     assert response.data['offer_raise'] == 5
     assert response.data['promoting'] is True
     assert response.data['customer_care'] is True
-    assert response.data['first_day'] == '2023-12-31'
-    assert response.data['last_day'] == '2024-01-30'
+    assert response.data['first_day'] == first_day
+    assert response.data['last_day'] == last_day
 
 
 @pytest.mark.django_db
@@ -105,7 +111,7 @@ def test_create_subscription_with_wrong_type(api_client_with_credentials, create
     url = reverse('subscription')
     data = {
         'type': 'test',
-        'first_day': '2023-12-31'
+        'first_day': get_date(0)
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == 400
@@ -147,14 +153,14 @@ def test_default_ordering_data(create_subscriptions):
     response = create_subscriptions.get(url)
 
     assert response.status_code == 200
-    assert response.data[0]['last_day'] == '2022-01-31'
-    assert response.data[1]['last_day'] == '2022-02-01'
-    assert response.data[2]['last_day'] == '2022-05-30'
-    assert response.data[3]['last_day'] == '2022-09-30'
-    assert response.data[4]['last_day'] == '2023-01-30'
-    assert response.data[5]['last_day'] == '2023-02-04'
-    assert response.data[6]['last_day'] == '2023-03-04'
-    assert response.data[7]['last_day'] == '2024-01-30'
+    assert response.data[0]['last_day'] == get_date(30)
+    assert response.data[1]['last_day'] == get_date(32)
+    assert response.data[2]['last_day'] == get_date(33)
+    assert response.data[3]['last_day'] == get_date(42)
+    assert response.data[4]['last_day'] == get_date(53)
+    assert response.data[5]['last_day'] == get_date(63)
+    assert response.data[6]['last_day'] == get_date(75)
+    assert response.data[7]['last_day'] == get_date(90)
 
 
 def test_ordering_by_created_field(create_subscriptions):
@@ -228,14 +234,22 @@ def create_subscriptions(api_client_with_credentials, create_employer):
     """
     url = reverse('subscription')
     data = [
-        {'type': 'Standard', 'first_day': '2023-12-31'},
-        {'type': 'Pro', 'first_day': '2022-12-31'},
-        {'type': 'Business', 'first_day': '2022-01-01'},
-        {'type': 'Standard', 'first_day': '2023-02-02'},
-        {'type': 'Business', 'first_day': '2023-01-05'},
-        {'type': 'Pro', 'first_day': '2022-04-30'},
-        {'type': 'Enterprise', 'first_day': '2022-01-02'},
-        {'type': 'Standard', 'first_day': '2022-08-31'}
+        {'type': 'Standard', 'first_day': get_date(60)},
+        {'type': 'Pro', 'first_day': get_date(23)},
+        {'type': 'Business', 'first_day': get_date(33)},
+        {'type': 'Standard', 'first_day': get_date(0)},
+        {'type': 'Business', 'first_day': get_date(3)},
+        {'type': 'Pro', 'first_day': get_date(2)},
+        {'type': 'Enterprise', 'first_day': get_date(12)},
+        {'type': 'Standard', 'first_day': get_date(45)}
     ]
     [api_client_with_credentials.post(url, data=data[x]) for x, _ in enumerate(data)]
     return api_client_with_credentials
+
+
+def get_date(value: int) -> str:
+    """
+    The function returns the date in text format
+    """
+    date_ = date.today() + timedelta(days=value)
+    return date_.strftime("%Y-%m-%d")

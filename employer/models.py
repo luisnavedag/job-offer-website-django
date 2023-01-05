@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from job_offers.models import JobOffer
+from datetime import date, timedelta
 
 
 class Employer(models.Model):
@@ -49,4 +50,11 @@ class Subscription(models.Model):
     first_day = models.DateField()
     last_day = models.DateField(blank=True)
 
+    @staticmethod
+    def get_valid_subscriptions():
+        return Subscription.objects.filter(first_day__lte=date.today(), last_day__lte=Subscription.get_last_date())
+
+    @staticmethod
+    def get_last_date():
+        return date.today() + timedelta(days=30)
 

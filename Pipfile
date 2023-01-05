@@ -15,6 +15,9 @@ django-filter = "*"
 django-rest-passwordreset = "*"
 pytest-django = "*"
 pytest = "*"
+redis = "*"
+django-celery-beat = "*"
+flower = "*"
 
 [dev-packages]
 
