@@ -18,7 +18,7 @@ class Employer(models.Model):
 class Payment(models.Model):
     STATUS = (
         ("UNPAID", "UNPAID"),
-        ("IN PROGRESS", "IN PROGRESS"),
+        ("IN-PROGRESS", "IN PROGRESS"),
         ("PAID", "PAID"),
     )
 
@@ -52,9 +52,7 @@ class Subscription(models.Model):
 
     @staticmethod
     def get_valid_subscriptions():
-        return Subscription.objects.filter(first_day__lte=date.today(), last_day__lte=Subscription.get_last_date())
-
-    @staticmethod
-    def get_last_date():
-        return date.today() + timedelta(days=30)
-
+        return Subscription.objects.filter(
+            first_day__gte=date.today() - timedelta(days=30),
+            first_day__lte=date.today()
+        )

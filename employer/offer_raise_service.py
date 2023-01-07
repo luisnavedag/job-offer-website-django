@@ -65,7 +65,6 @@ class GetTheClosestDate:
         """
         The function returns the date closest to today's date
         """
-
         if date.today() in self.raised_dates:
             return date.today()
 

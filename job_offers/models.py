@@ -15,7 +15,7 @@ TAGS = (
     ('Design', 'Design'),
     ('HR', 'HR'),
     ('Consulting', 'Consulting'),
-    ('BI & Data', 'BI & Data'),
+    ('BI-&-Data', 'BI & Data'),
     ('SEO', 'SEO'),
     ('PM', 'PM'),
     ('Media', 'Media'),
@@ -28,15 +28,15 @@ EXPERIENCE = (
     ('Internship/Junior', 'Internship/Junior'),
     ('Mid', 'Mid'),
     ('Senior', 'Senior'),
-    ('Manager/C level', 'Manager/C level'),
+    ('Manager/C-level', 'Manager/C level'),
 )
 
 FORM_OF_EMPLOYMENT = (
-    ('Fixed-term contract', 'Fixed-term contract'),
+    ('Fixed-term-contract', 'Fixed-term contract'),
     ('Full-time', 'Full-time'),
     ('Part-time', 'Part-time'),
     ('Self-employment', 'Self-employment'),
-    ('Internship employment', 'Internship employment'),
+    ('Internship-employment', 'Internship employment'),
 )
 
 CURRENCY = (
@@ -48,14 +48,14 @@ CURRENCY = (
 )
 
 OPERATING_MODE = (
-    ('Remote work', 'Remote work'),
-    ('Hybrid work', 'Hybrid work'),
-    ('On site', 'On site'),
+    ('Remote-work', 'Remote work'),
+    ('Hybrid-work', 'Hybrid work'),
+    ('On-site', 'On site'),
 )
 
 WORKING_TIME = (
-    ('Full time', 'Full time'),
-    ('Part time', 'Part time'),
+    ('Full-time', 'Full-time'),
+    ('Part-time', 'Part-time'),
     ('Internship', 'Internship'),
 )
 

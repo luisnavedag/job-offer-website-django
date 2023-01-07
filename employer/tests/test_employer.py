@@ -1,11 +1,14 @@
 import pytest
 from django.urls import reverse
+from rest_framework.test import APIClient
 from ..models import Employer
 from user.models import User
 
 
 @pytest.mark.django_db
-def test_create_employer(api_client_with_credentials, create_user):
+def test_create_employer_without_required_fields(
+        api_client_with_credentials: APIClient,
+        create_user: User):
     """
     Testing if we can create an employer without any additional field
     """
@@ -14,11 +17,13 @@ def test_create_employer(api_client_with_credentials, create_user):
         'user': create_user.username,
     }
     response = api_client_with_credentials.post(url, data=data)
-    assert response.status_code == 404
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db
-def test_create_employer(api_client_with_credentials, create_user):
+def test_create_employer(
+        api_client_with_credentials: APIClient,
+        create_user: User):
     """
     Testing if we can create an employer
     """
@@ -34,7 +39,9 @@ def test_create_employer(api_client_with_credentials, create_user):
 
 
 @pytest.mark.django_db
-def test_retrieve_employer(api_client_with_credentials, create_employer):
+def test_retrieve_employer(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test getting data for authenticated user
     """
@@ -46,7 +53,9 @@ def test_retrieve_employer(api_client_with_credentials, create_employer):
 
 
 @pytest.mark.django_db
-def test_update_employer(api_client_with_credentials, create_user):
+def test_update_employer(
+        api_client_with_credentials: APIClient,
+        create_user: User):
     """
     Test updating data for authenticated user
     """
@@ -70,7 +79,9 @@ def test_update_employer(api_client_with_credentials, create_user):
 
 
 @pytest.mark.django_db
-def test_remove_employer(api_client_with_credentials, create_employer):
+def test_remove_employer(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Testing the removal of the employer and the user that will be removed automatically via signals
     """

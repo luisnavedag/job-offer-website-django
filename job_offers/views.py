@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from employer.models import Subscription
 from .models import JobOffer
-from .serializers import JobOfferSerializer
+from .serializers import JobOfferSerializer, JobOfferFilterSerializer
 from .filters import JobOfferFilter
 from datetime import datetime
 
@@ -55,7 +55,7 @@ class JobOfferListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     queryset = JobOffer.objects.all()
-    serializer_class = JobOfferSerializer
+    serializer_class = JobOfferFilterSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = JobOfferFilter
 
@@ -64,7 +64,10 @@ class JobOfferListView(generics.ListAPIView):
         The function returns offers that have valid subscriptions
         """
         subscriptions = Subscription.get_valid_subscriptions()
-        return JobOffer.objects.filter(id__in=[subscription.job_offer.id for subscription in subscriptions])
+        return JobOffer.objects.filter(
+            id__in=[subscription.job_offer.id for subscription in subscriptions],
+            verified=True
+        )
 
     def list(self, request, *args, **kwargs):
         """

@@ -1,10 +1,15 @@
-import pytest
 from django.urls import reverse
+from rest_framework.test import APIClient
+from employer.models import Employer
+from employee.models import Employee
+import pytest
 from datetime import date, timedelta
 
 
 @pytest.mark.django_db
-def test_create_standard_subscription(api_client_with_credentials, create_employer):
+def test_create_standard_subscription(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test adding a subscription for a standard type
     """
@@ -29,7 +34,9 @@ def test_create_standard_subscription(api_client_with_credentials, create_employ
 
 
 @pytest.mark.django_db
-def test_create_business_subscription(api_client_with_credentials, create_employer):
+def test_create_business_subscription(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test adding a subscription for a business type
     """
@@ -54,7 +61,9 @@ def test_create_business_subscription(api_client_with_credentials, create_employ
 
 
 @pytest.mark.django_db
-def test_create_pro_subscription(api_client_with_credentials, create_employer):
+def test_create_pro_subscription(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test adding a subscription for a Pro type
     """
@@ -79,7 +88,9 @@ def test_create_pro_subscription(api_client_with_credentials, create_employer):
 
 
 @pytest.mark.django_db
-def test_create_enterprise_subscription(api_client_with_credentials, create_employer):
+def test_create_enterprise_subscription(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test adding a subscription for an Enterprise type
     """
@@ -104,7 +115,9 @@ def test_create_enterprise_subscription(api_client_with_credentials, create_empl
 
 
 @pytest.mark.django_db
-def test_create_subscription_with_wrong_type(api_client_with_credentials, create_employer):
+def test_create_subscription_with_wrong_type(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test whether an error will be returned for the wrong type field
     """
@@ -118,7 +131,9 @@ def test_create_subscription_with_wrong_type(api_client_with_credentials, create
 
 
 @pytest.mark.django_db
-def test_create_subscription_with_wrong_data(api_client_with_credentials, create_employer):
+def test_create_subscription_with_wrong_data(
+        api_client_with_credentials: APIClient,
+        create_employer: Employer):
     """
     Test whether an error will be returned for the wrong first_day field
     """
@@ -132,7 +147,9 @@ def test_create_subscription_with_wrong_data(api_client_with_credentials, create
 
 
 @pytest.mark.django_db
-def test_create_subscription_for_user_without_permission(api_client_with_credentials, create_employee):
+def test_create_subscription_for_user_without_permission(
+        api_client_with_credentials: APIClient,
+        create_employee: Employee):
     """
     Test if an error is returned for a user without permission
     """
@@ -145,7 +162,7 @@ def test_create_subscription_for_user_without_permission(api_client_with_credent
     assert response.status_code == 403
 
 
-def test_default_ordering_data(create_subscriptions):
+def test_default_ordering_data(create_subscriptions: APIClient):
     """
     Test the default ordering settings
     """
@@ -163,7 +180,7 @@ def test_default_ordering_data(create_subscriptions):
     assert response.data[7]['last_day'] == get_date(90)
 
 
-def test_ordering_by_created_field(create_subscriptions):
+def test_ordering_by_created_field(create_subscriptions: APIClient):
     """
     Test ordering for field created
     """
@@ -181,7 +198,7 @@ def test_ordering_by_created_field(create_subscriptions):
     assert response.data[7]['id'] == 8
 
 
-def test_ordering_by_type_field(create_subscriptions):
+def test_ordering_by_type_field(create_subscriptions: APIClient):
     """
     Test ordering for field type
     """
@@ -199,7 +216,7 @@ def test_ordering_by_type_field(create_subscriptions):
     assert response.data[7]['type'] == 'Standard'
 
 
-def test_filtering_by_type_field_as_business(create_subscriptions):
+def test_filtering_by_type_field_as_business(create_subscriptions: APIClient):
     """
     Test filtering for field Business
     """
@@ -212,7 +229,7 @@ def test_filtering_by_type_field_as_business(create_subscriptions):
     assert response.data[1]['type'] == 'Business'
 
 
-def test_filtering_by_type_field_as_standard(create_subscriptions):
+def test_filtering_by_type_field_as_standard(create_subscriptions: APIClient):
     """
     Test filtering for field Standard
     """
@@ -228,7 +245,7 @@ def test_filtering_by_type_field_as_standard(create_subscriptions):
 
 @pytest.fixture
 @pytest.mark.django_db
-def create_subscriptions(api_client_with_credentials, create_employer):
+def create_subscriptions(api_client_with_credentials: APIClient, create_employer: Employer):
     """
     Create different subscriptions for testing purposes
     """

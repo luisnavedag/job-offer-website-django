@@ -18,7 +18,7 @@ class Employee(models.Model):
         ('Design', 'Design'),
         ('HR', 'HR'),
         ('Consulting', 'Consulting'),
-        ('BI & Data', 'BI & Data'),
+        ('BI-&-Data', 'BI & Data'),
         ('SEO', 'SEO'),
         ('PM', 'PM'),
         ('Media', 'Media'),

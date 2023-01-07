@@ -8,8 +8,8 @@ class JobOfferFilter(filters.FilterSet):
     """
 
     tags = filters.ChoiceFilter(choices=TAGS)
-    min_price = filters.NumberFilter(field_name="salary_from", lookup_expr='gte')
-    max_price = filters.NumberFilter(field_name="salary_up_to", lookup_expr='lte')
+    min_amount = filters.NumberFilter(field_name="salary_from", lookup_expr='gte')
+    max_amount = filters.NumberFilter(field_name="salary_up_to", lookup_expr='lte')
     experience = filters.ChoiceFilter(choices=EXPERIENCE)
     form_of_employment = filters.ChoiceFilter(choices=FORM_OF_EMPLOYMENT)
     operationg_mode = filters.ChoiceFilter(choices=OPERATING_MODE)
