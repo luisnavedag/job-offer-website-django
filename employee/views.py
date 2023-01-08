@@ -9,8 +9,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
-from API.permissions import IsEmployer
+from API.permissions import IsEmployer, IsEmployee
 from employer.models import Employer
+from job_offers.models import JobOffer
+from job_offers.serializers import JobOfferSerializer
+from job_offers.filters import JobOfferFilter
 
 
 class EmployeeCreate(APIView):
@@ -125,3 +128,23 @@ class SkillListView(generics.ListAPIView):
     filterset_fields = ('name',)
     ordering_fields = ('created',)
     search_fields = ('name',)
+
+
+class EmployeeAplicationsListView(generics.ListAPIView):
+    """
+    Returns information about all applications of the logged in user
+    """
+
+    permission_classes = [IsEmployee]
+
+    queryset = JobOffer.objects.all()
+    serializer_class = JobOfferSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_class = JobOfferFilter
+    ordering = ['-id']
+
+    def get_queryset(self):
+        """
+        The function returns job offers for which the logged-in user has applied
+        """
+        return JobOffer.objects.filter(application__employee__user=self.request.user)
