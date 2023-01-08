@@ -2,13 +2,16 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from API.permissions import IsEmployer, IsJobOfferCreator
+from API.permissions import IsEmployer, IsJobOfferCreator, IsEmployee
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.request import Request
 from employer.models import Subscription
-from .models import JobOffer
+from employee.models import Employee
+from .models import JobOffer, Application
 from .serializers import JobOfferSerializer, JobOfferFilterSerializer
 from .filters import JobOfferFilter
+from .email_service import SendEmailJobOfferNewApplication
 from datetime import datetime
 
 
@@ -76,3 +79,35 @@ class JobOfferListView(generics.ListAPIView):
         response = super().list(request, *args, **kwargs)
         response.data = sorted(response.data, key=lambda x: x['days_to_raise'])
         return response
+
+
+class JobOfferApplication(APIView):
+    """
+    The application of a logged-in employee for a given position
+    """
+    permission_classes = [IsEmployee]
+
+    def get(self, request: Request, pk: int) -> Response:
+        job_offer_instance = get_object_or_404(JobOffer, id=pk)
+        employee_instance = Employee.objects.get(user=request.user)
+
+        if Application.objects.filter(job_offer=job_offer_instance, employee=employee_instance).exists():
+            response = {'message': 'The application for this position has already been submitted'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        Application.objects.create(
+            job_offer=job_offer_instance,
+            employee=employee_instance
+        )
+
+        data = {
+            'employee_id': employee_instance.id,
+            'job_offer_id': job_offer_instance.id,
+            'job_offer_title': job_offer_instance.title
+            }
+
+        SendEmailJobOfferNewApplication(data).send_email()
+
+        response = {'message': 'Application for the position have been submitted'}
+
+        return Response(response, status=status.HTTP_200_OK)

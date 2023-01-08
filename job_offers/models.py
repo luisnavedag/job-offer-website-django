@@ -1,6 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from API.models import CommonItem
+from employee.models import Employee
 
 
 class City(CommonItem):
@@ -85,3 +86,12 @@ class JobOffer(models.Model):
     modified = models.DateTimeField(auto_now=True)
     verified = models.BooleanField(default=False)
     activated = models.BooleanField(default=False)
+
+
+class Application(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    job_offer = models.ForeignKey(JobOffer, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('employee', 'job_offer')

@@ -61,3 +61,15 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns secure user data for an application
+    """
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'email']

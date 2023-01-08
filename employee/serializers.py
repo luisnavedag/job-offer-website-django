@@ -51,13 +51,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             return Employee.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.skills.clear()
-        # todo nie nalezy usuwac skills tylko przepisac z bazy
         if validated_data.get('skills', None):
+            instance.skills.clear()
             skills = validated_data.pop('skills')
             for skill in skills:
-                Skill.objects.get_or_create(name=skill['name'])
-                s1 = Skill.objects.get(name=skill['name'])
+                s1, _ = Skill.objects.get_or_create(name=skill['name'])
                 s1.save()
                 instance.skills.add(s1)
 

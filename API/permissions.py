@@ -1,5 +1,6 @@
 from rest_framework import permissions
 from employer.models import Employer, Subscription
+from employee.models import Employee
 
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -18,6 +19,14 @@ class IsEmployer(permissions.BasePermission):
     """
     def has_permission(self, request, view):
         return Employer.objects.filter(user=request.user).exists()
+
+
+class IsEmployee(permissions.BasePermission):
+    """
+    Verify that the user requesting access to the resource is an employee
+    """
+    def has_permission(self, request, view):
+        return Employee.objects.filter(user=request.user).exists()
 
 
 class IsJobOfferCreator(permissions.BasePermission):

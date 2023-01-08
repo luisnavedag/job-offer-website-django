@@ -108,7 +108,7 @@ class EmployeeListView(generics.ListAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
-    filterset_fields = ('tags', 'status', 'city', 'skills__name')
+    filterset_fields = ('id', 'tags', 'status', 'city', 'skills__name')
     ordering_fields = ('user',)
     search_fields = ('city', 'tags')
 

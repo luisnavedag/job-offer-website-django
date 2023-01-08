@@ -1,5 +1,5 @@
 from .models import User
-from .serializers import RegisterSerializer, ChangePasswordSerializer
+from .serializers import RegisterSerializer, ChangePasswordSerializer, UserSerializer
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from .email_service import SendEmailNewUser
@@ -83,3 +83,11 @@ class ChangePasswordView(generics.UpdateAPIView):
         }
 
         return Response(response)
+
+
+class UserDetail(generics.RetrieveAPIView):
+    """
+    Secure user information
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

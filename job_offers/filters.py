@@ -7,6 +7,7 @@ class JobOfferFilter(filters.FilterSet):
     The function accepts fields and indicates how job offers can be filtered
     """
 
+    id = filters.NumberFilter()
     tags = filters.ChoiceFilter(choices=TAGS)
     min_amount = filters.NumberFilter(field_name="salary_from", lookup_expr='gte')
     max_amount = filters.NumberFilter(field_name="salary_up_to", lookup_expr='lte')
@@ -19,6 +20,7 @@ class JobOfferFilter(filters.FilterSet):
     class Meta:
         model = JobOffer
         fields = [
+            'id',
             'tags',
             'salary_from',
             'salary_up_to',
