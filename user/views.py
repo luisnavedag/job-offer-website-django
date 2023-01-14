@@ -20,7 +20,9 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        SendEmailNewUser(serializer.data).send_email()
+        send_email_instance = SendEmailNewUser()
+        send_email_instance.email_data = serializer.data
+        send_email_instance.send_email()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

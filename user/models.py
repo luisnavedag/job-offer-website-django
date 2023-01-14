@@ -19,8 +19,10 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     """
     The function via signals send an email with a link to reset the password
     """
-    SendEmailPasswordReset({
+    send_email_instance = SendEmailPasswordReset()
+    send_email_instance.email_data = {
         'username': reset_password_token.user.username,
         'email': reset_password_token.user.email,
         "key": reset_password_token.key
-    }).send_email()
+    }
+    send_email_instance.send_email()

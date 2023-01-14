@@ -1,6 +1,7 @@
 from rest_framework import permissions
-from employer.models import Employer, Subscription
+from employer.models import Employer
 from employee.models import Employee
+from user.models import User
 
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -34,4 +35,4 @@ class IsJobOfferCreator(permissions.BasePermission):
     Check if the user who wants to update a given subscription is its author
     """
     def has_object_permission(self, request, view, obj):
-        return Subscription.objects.filter(job_offer=obj.id).exists()
+        return User.objects.get(employer__subscription__job_offer=obj.id) == request.user

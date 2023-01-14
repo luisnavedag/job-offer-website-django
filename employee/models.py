@@ -34,6 +34,7 @@ class Employee(models.Model):
     linkdin = models.URLField(max_length=200, null=True, blank=True)
     status = models.CharField(choices=STATUS, max_length=100, null=True)
     about_yourself = models.TextField(null=True, blank=True)
+    accept_matchmaking = models.BooleanField(default=False)
 
 
 class Skill(CommonItem):

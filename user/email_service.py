@@ -8,9 +8,22 @@ class SendEmail(ABC):
     """
     The base class for sending emails
     """
-    def __init__(self, data: dict[any]):
-        self.data = data
-        self.body = self._get_body()
+    def __init__(self):
+        self.data = dict()
+
+    @property
+    def email_data(self) -> dict[any]:
+        """
+        The function via property returns information about the data of a given object
+        """
+        return self.data
+
+    @email_data.setter
+    def email_data(self, new_value: dict[any]):
+        """
+        The function via property updates the data in the dict of the given object
+        """
+        self.data.update(new_value)
 
     @abstractmethod
     def send_email(self) -> EmailMessage:
@@ -44,7 +57,7 @@ class SendEmailNewUser(SendEmail):
         email.send()
 
     def _get_obj(self) -> EmailMessage:
-        return EmailMessage('Activate your account', self.body, to=[self.data['email']])
+        return EmailMessage('Activate your account', self._get_body(), to=[self.data['email']])
 
     def _get_body(self) -> str:
         url = f"{reverse('activate_register')}?id={self.data['id']}&expiration_timestamp={self._get_timestamp()}"
@@ -74,7 +87,7 @@ class SendEmailPasswordReset(SendEmail):
         email.send()
 
     def _get_obj(self) -> EmailMessage:
-        return EmailMessage('Password Reset', self.body, to=[self.data['email']])
+        return EmailMessage('Password Reset', self._get_body(), to=[self.data['email']])
 
     def _get_body(self) -> str:
         url = f"{reverse('password_reset:reset-password-request')}?token={self.data['key']}"

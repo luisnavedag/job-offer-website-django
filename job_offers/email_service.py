@@ -17,7 +17,7 @@ class SendEmailJobOfferVerification(SendEmail):
 
     def _get_obj(self) -> EmailMessage:
         return EmailMessage(
-            f'Verification of the job offer - {self.data["title"]}', self.body, to=('test.grzegorzp@gmail.com',)
+            f'Verification of the job offer - {self.data["title"]}', self._get_body(), to=('test.grzegorzp@gmail.com',)
         )
 
     def _get_body(self) -> str:
@@ -53,7 +53,9 @@ class SendEmailJobOfferVerification(SendEmail):
 
 
 class SendEmailJobOfferNewApplication(SendEmail):
-
+    """
+    Email a user about an approval of his application for a given position
+    """
     def send_email(self):
         email = super().send_email()
         email.content_subtype = 'html'
@@ -62,7 +64,7 @@ class SendEmailJobOfferNewApplication(SendEmail):
     def _get_obj(self) -> EmailMessage:
         return EmailMessage(
             f'The application for your job offer - {self.data["job_offer_title"]}, has just been submitted!',
-            self.body,
+            self._get_body(),
             to=('test.grzegorzp@gmail.com',) #todo usun email
         )
 
@@ -109,3 +111,57 @@ class SendEmailJobOfferNewApplication(SendEmail):
             employer__subscription__job_offer=self.data['job_offer_id']).values_list('id', flat=True)[0]
         instance = User.objects.get(id=user)
         return {'first_name': instance.first_name, 'last_name': instance.last_name}
+
+
+class SendEmailJobOfferMatchmaking(SendEmail):
+    """
+    Email users who have skills required in a newly added job offer
+    """
+    def send_email(self):
+        email = super().send_email()
+        email.content_subtype = 'html'
+        email.send()
+
+    def _get_obj(self) -> EmailMessage:
+        return EmailMessage(
+            f'New job offer - {self.data["job_offer_title"]}.',
+            self._get_body(),
+            to=('test.grzegorzp@gmail.com',)  # todo usun email
+        )
+
+    def _get_body(self) -> str:
+        self.data.update(self._get_employee_data(self.data['employee']))
+        return f'''\
+        <html>
+        <body>
+            <div style="font-family:Consolas;margin:auto 100px;padding:5px;text-size:16px;color:white;background-color:grey">
+
+                <h1>Hi {self.data['first_name']} {self.data['last_name']}</h1>
+
+                <h2>A new job offer has just been added that may interest you!</h2>
+                <h2>{self.data["job_offer_title"]}</h2>
+
+                <div>
+                Click on the link below to go to the offer:
+                </div>
+                <a href="{self._get_job_offer_url()}" target="_blank">Click here</a>
+
+            </div>
+        </body>
+        </html>
+        '''
+
+    def _get_job_offer_url(self) -> str:
+        """
+        The function returns the URL to the job offer for which the candidate applied
+        """
+        return reverse('job-offers') + f'?id={self.data["job_offer_id"]}'
+
+    @staticmethod
+    def _get_employee_data(employee: str) -> dict[str, str]:
+        """
+        Get user details to display in email header
+        """
+        instance = User.objects.get(employee=employee)
+        return {'first_name': instance.first_name, 'last_name': instance.last_name}
+

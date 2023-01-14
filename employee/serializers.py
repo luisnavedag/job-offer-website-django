@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db import transaction
 from .models import Employee, Skill
 from . import validators
 from user.models import User
@@ -13,9 +14,9 @@ class SkillSerializer(serializers.ModelSerializer):
             'name',
         ]
 
-    def create(self, validated_data):
-        Skill.objects.get_or_create(name=validated_data.get('name'))
-        return Skill.objects.get(name=validated_data.get('name'))
+    def create(self, validated_data: dict) -> Skill:
+        instance, _ = Skill.objects.get_or_create(name=validated_data.get('name'))
+        return instance
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -37,20 +38,21 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'about_yourself'
         ]
 
-    def create(self, validated_data):
+    @transaction.atomic
+    def create(self, validated_data: dict) -> Employee:
         if validated_data.get('skills', None):
             skills = validated_data.pop('skills')
             instance = Employee.objects.create(**validated_data)
             for skill in skills:
-                Skill.objects.get_or_create(name=skill['name'])
-                s1 = Skill.objects.get(name=skill['name'])
+                s1, _ = Skill.objects.get_or_create(name=skill['name'])
                 s1.save()
                 instance.skills.add(s1)
             return instance
         else:
             return Employee.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
+    @transaction.atomic
+    def update(self, instance: Employee, validated_data: dict) -> Employee:
         if validated_data.get('skills', None):
             instance.skills.clear()
             skills = validated_data.pop('skills')
@@ -68,5 +70,5 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
         return instance
 
-    def get_user(self, obj):
+    def get_user(self, obj) -> User:
         return User.objects.get(email=obj.user).id

@@ -1,12 +1,13 @@
 from rest_framework import serializers
+from django.db.models import Model
+from django.db import transaction
+from .email_service import SendEmailJobOfferVerification
 from job_offers.models import JobOffer, City
 from employee.serializers import SkillSerializer
 from employee.models import Skill
-from django.db.models import Model
-from .email_service import SendEmailJobOfferVerification
 from employer.offer_raise_service import *
-from itertools import product
 from employer.models import Subscription
+from itertools import product
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -52,6 +53,7 @@ class JobOfferSerializer(serializers.ModelSerializer):
             'contact_phone',
         ]
 
+    @transaction.atomic
     def update(self, instance: JobOffer, validated_data: dict) -> JobOffer:
 
         if validated_data.get('skills', None):
@@ -88,7 +90,9 @@ class JobOfferSerializer(serializers.ModelSerializer):
 
         instance.save()
 
-        SendEmailJobOfferVerification(instance.__dict__).send_email()
+        send_email_instance = SendEmailJobOfferVerification()
+        send_email_instance.email_data = instance.__dict__
+        send_email_instance.send_email()
 
         return instance
 
@@ -141,7 +145,7 @@ class JobOfferFilterSerializer(JobOfferSerializer):
         model = JobOffer
         fields = '__all__'
 
-    def get_days_to_raise(self, obj):
+    def get_days_to_raise(self, obj) -> int:
         """
         The days_to_raise field will be created accordingly before sending the request
         """

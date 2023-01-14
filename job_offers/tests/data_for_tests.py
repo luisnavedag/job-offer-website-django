@@ -3,6 +3,9 @@ from job_offers.models import JobOffer, City
 from employer.models import Employer, Subscription, Payment
 from datetime import date, timedelta
 from employer.static import *
+from employee.models import Skill, Employee
+from faker import Faker
+from user.models import User
 
 
 @pytest.mark.django_db
@@ -30,7 +33,7 @@ def create_subs(
     )
 
 
-def create_obj_name_field(items: list, obj: type[City]) -> tuple:
+def create_obj_name_field(items: list, obj: type[City | Skill]) -> tuple:
     """
     Create tuples of objects that can be assigned to any field in a many-to-many relationship
     """
@@ -44,7 +47,7 @@ def create_obj_name_field(items: list, obj: type[City]) -> tuple:
 
 @pytest.mark.django_db
 def create_job_offer(
-        title: str, cities: list, tags: str, experience: str, form_of_employment: str,
+        title: str, skills: list, cities: list, tags: str, experience: str, form_of_employment: str,
         salary_from: int, salary_up_to: int, operationg_mode: str, working_time: str):
     """
     The function adds job offer to the database and returns an object
@@ -70,6 +73,7 @@ def create_job_offer(
         verified=True)
 
     instance.cities.add(*create_obj_name_field(cities, City))
+    instance.skills.add(*create_obj_name_field(skills, Skill))
 
     return instance
 
@@ -82,6 +86,7 @@ def create_data(create_employer: Employer) -> list:
     return[
         create_subs(create_employer, Pro, get_date(0), create_job_offer(
             title='Python Programer',
+            skills=[{'name': 'Python'}, {'name': 'Pytest'}],
             cities=[{'name': 'Cracow'}, {'name': 'Lodz'}, {'name': 'Gdansk'}, {'name': 'Lublin'}, {'name': 'Sopot'}],
             tags='Engineering',
             experience='Mid',
@@ -93,6 +98,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Business, get_date(16), create_job_offer(
             title='SEM Planner',
+            skills=[{'name': 'Google Ads'}, {'name': 'Google Analytics'}],
             cities=[{'name': 'Cracow'}, {'name': 'Sopot'}],
             tags='Marketing',
             experience='Senior',
@@ -104,6 +110,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Standard, get_date(4), create_job_offer(
             title='Graphic Design Intern',
+            skills=[{'name': 'InDesign'}],
             cities=[{'name': 'Cracow'}],
             tags='Design',
             experience='Internship/Junior',
@@ -115,6 +122,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Pro, get_date(9), create_job_offer(
             title='Recruitment Specialist',
+            skills=[{'name': 'MS Office'}],
             cities=[{'name': 'Cracow'}, {'name': 'Lodz'}, {'name': 'Gdansk'}, {'name': 'Lublin'}, {'name': 'Sopot'}],
             tags='HR',
             experience='Senior',
@@ -126,6 +134,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Business, get_date(17), create_job_offer(
             title='Data Analyst',
+            skills=[{'name': 'Bookkeeping'}, {'name': 'Google Analytics'}],
             cities=[{'name': 'Gliwice'}, {'name': 'Katowice'}],
             tags='Finances',
             experience='Mid',
@@ -137,6 +146,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Business, get_date(20), create_job_offer(
             title='Cardo Operations Manager',
+            skills=[{'name': 'Logistic'}, {'name': 'MS Office'}],
             cities=[{'name': 'Gdansk'}, {'name': 'Sopot'}],
             tags='Logistic',
             experience='Manager/C-level',
@@ -148,6 +158,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Enterprise, get_date(0), create_job_offer(
             title='Java Programmer',
+            skills=[{'name': 'Java'}, {'name': 'Spring'}, {'name': 'SQL'}],
             cities=[{'name': 'Cracow'}, {'name': 'Lodz'}, {'name': 'Gdansk'}, {'name': 'Lublin'},
                     {'name': 'Sopot'}, {'name': 'Radom'}, {'name': 'Gliwice'}, {'name': 'Sosnowiec'},
                     {'name': 'Szczecin'}, {'name': 'Kielce'}, {'name': 'Zamosc'}, {'name': 'Krynica'},
@@ -163,6 +174,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Pro, get_date(3), create_job_offer(
             title='Administrative Assistant',
+            skills=[{'name': 'Payroll'}, {'name': 'Excel'}, {'name': 'SQL'}],
             cities=[{'name': 'Cracow'}, {'name': 'Lodz'}, {'name': 'Gdansk'}, {'name': 'Lublin'}, {'name': 'Sopot'}],
             tags='HR',
             experience='Internship/Junior',
@@ -174,6 +186,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Standard, get_date(16), create_job_offer(
             title='Electrical Designer',
+            skills=[{'name': 'Eplan'}, {'name': 'Sistema'}, {'name': 'TIAPortal'}],
             cities=[{'name': 'Bydgoszcz'}],
             tags='Engineering',
             experience='Internship/Junior',
@@ -185,6 +198,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Enterprise, get_date(9), create_job_offer(
             title='Graphic Designer',
+            skills=[{'name': 'Photoshop'}, {'name': 'Corel'}],
             cities=[{'name': 'Cracow'}, {'name': 'Bielsko-Biala'}, {'name': 'Gdansk'}, {'name': 'Lublin'},
                     {'name': 'Sopot'}, {'name': 'Radom'}, {'name': 'Gliwice'}, {'name': 'Sosnowiec'},
                     {'name': 'Szczecin'}, {'name': 'Kielce'}, {'name': 'Zamosc'}, {'name': 'Krynica'},
@@ -200,6 +214,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Standard, get_date(-1), create_job_offer(
             title='Controls Engineer',
+            skills=[{'name': 'Studio5000'}, {'name': 'Eplan'}],
             cities=[{'name': 'Torun'}],
             tags='Engineering',
             experience='Internship/Junior',
@@ -211,6 +226,7 @@ def create_data(create_employer: Employer) -> list:
         )),
         create_subs(create_employer, Standard, get_date(31), create_job_offer(
             title='Electronic System Engineer',
+            skills=[{'name': 'Matlab'}, {'name': 'See Electrical'}],
             cities=[{'name': 'Cracow'}],
             tags='Engineering',
             experience='Mid',
@@ -228,3 +244,45 @@ def get_date(value: int) -> date:
     Create a back date based on today's date for testing purposes
     """
     return date.today() - timedelta(days=value)
+
+
+@pytest.mark.django_db
+def create_employee_with_skills(skills: list) -> Employee:
+    """
+    Create an employee with the given skills
+    """
+    user = User.objects.create_user(
+        username=Faker().email(),
+        password=Faker().password(),
+    )
+    instance = Employee.objects.create(
+        user=user,
+        tags="Engineering",
+        city="Test",
+        status="Active"
+    )
+
+    instance.skills.add(*create_obj_name_field(skills, Skill))
+
+    return instance
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def create_employees() -> list[Employee]:
+    """
+    Add employees to the database and return a list with the added employees
+    """
+    return [
+        create_employee_with_skills([{'name': 'Matlab'}, {'name': 'See Electrical'}]),
+        create_employee_with_skills([{'name': 'Eplan'}]),
+        create_employee_with_skills([{'name': 'Sistema'}, {'name': 'Eplan'}]),
+        create_employee_with_skills([{'name': 'Java'}, {'name': 'Spring'}, {'name': 'SQL'}],),
+        create_employee_with_skills([{'name': 'MS Office'}]),
+        create_employee_with_skills([{'name': 'Bookkeeping'}, {'name': 'MS Office'}]),
+        create_employee_with_skills([{'name': 'Google Analytics'}]),
+        create_employee_with_skills([{'name': 'Sistema'}]),
+        create_employee_with_skills([{'name': 'Python'}, {'name': 'SQL'}]),
+        create_employee_with_skills([{'name': 'Pytest'}]),
+        create_employee_with_skills([{'name': 'Java'}])
+    ]

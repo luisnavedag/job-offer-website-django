@@ -16,7 +16,7 @@ class GetRaisedDate(ABC):
 
 
 class GetRaisedDateStandard(GetRaisedDate):
-    def get_date(self):
+    def get_date(self) -> list[date]:
         """
         The function returns a list of days when the offer should be raised for a standard subscription
         """
@@ -24,7 +24,7 @@ class GetRaisedDateStandard(GetRaisedDate):
 
 
 class GetRaisedDateBusiness(GetRaisedDate):
-    def get_date(self):
+    def get_date(self) -> list[date]:
         """
         The function returns a list of days when the offer should be raised for a business subscription
         """
@@ -32,7 +32,7 @@ class GetRaisedDateBusiness(GetRaisedDate):
 
 
 class GetRaisedDatePro(GetRaisedDate):
-    def get_date(self):
+    def get_date(self) -> list[date]:
         """
         The function returns a list of days when the offer should be raised for a pro subscription
         """
@@ -40,7 +40,7 @@ class GetRaisedDatePro(GetRaisedDate):
 
 
 class GetRaisedDateEnterprise(GetRaisedDate):
-    def get_date(self):
+    def get_date(self) -> list[date]:
         """
         The function returns a list of days when the offer should be raised for an enterprise subscription
         """
@@ -54,14 +54,14 @@ class GetTheClosestDate:
     def __init__(self, raised_dates: GetRaisedDate):
         self.raised_dates = raised_dates.get_date()
 
-    def get_days_from_raised(self):
+    def get_days_from_raised(self) -> int:
         """
         The function returns information when an offer was last raised
         """
         day_difference = date.today() - self.get_closest_date()
         return day_difference.days
 
-    def get_closest_date(self):
+    def get_closest_date(self) -> date:
         """
         The function returns the date closest to today's date
         """
@@ -73,7 +73,7 @@ class GetTheClosestDate:
 
         return self.find_closest_date()
 
-    def find_closest_date(self):
+    def find_closest_date(self) -> date:
         """
         The function finds the date closest to today's date
         """

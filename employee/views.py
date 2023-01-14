@@ -55,7 +55,7 @@ class EmployeeDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
-    def get_object(self):
+    def get_object(self) -> Employee:
         obj = get_object_or_404(Employee, user=self.request.user.id)
         return obj
 
@@ -97,7 +97,7 @@ class SkillDetail(APIView):
         return Response({'detail': 'Deleted.'}, status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
-    def get_object(pk):
+    def get_object(pk) -> Skill:
         obj = get_object_or_404(Skill, id=pk)
         return obj
 
@@ -143,7 +143,7 @@ class EmployeeAplicationsListView(generics.ListAPIView):
     filter_class = JobOfferFilter
     ordering = ['-id']
 
-    def get_queryset(self):
+    def get_queryset(self) -> JobOffer:
         """
         The function returns job offers for which the logged-in user has applied
         """

@@ -4,6 +4,7 @@ from user.models import User
 from .static import *
 from datetime import timedelta, date
 from job_offers.models import JobOffer
+from django.db import transaction
 
 
 class EmployerSerializer(serializers.ModelSerializer):
@@ -14,7 +15,7 @@ class EmployerSerializer(serializers.ModelSerializer):
         model = Employer
         fields = '__all__'
 
-    def get_user(self, obj):
+    def get_user(self, obj) -> User:
         return User.objects.get(email=obj.user).id
 
 
@@ -40,7 +41,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'last_day',
         ]
 
-    def create(self, validated_data):
+    @transaction.atomic
+    def create(self, validated_data: dict) -> Subscription:
         type_obj = self._get_enum(validated_data['type'])
 
         employer = Employer.objects.get(user=validated_data['user'])
@@ -68,7 +70,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         )
         return instance
 
-    def validate_first_day(self, value):
+    def validate_first_day(self, value: date) -> date:
         if value < date.today():
             raise serializers.ValidationError("The first day of displaying the offer cannot be less than today's date")
         if value > date.today() + timedelta(days=60):
@@ -76,7 +78,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return value
 
     @staticmethod
-    def _get_enum(ad_type: str):
+    def _get_enum(ad_type: str) -> type(Enum):
         match ad_type:
             case 'Standard':
                 return Standard

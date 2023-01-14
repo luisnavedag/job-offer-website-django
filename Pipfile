@@ -18,6 +18,9 @@ pytest = "*"
 redis = "*"
 django-celery-beat = "*"
 flower = "*"
+celery = "*"
+python-decouple = "*"
+faker = "*"
 
 [dev-packages]
 

@@ -13,6 +13,8 @@ from .serializers import JobOfferSerializer, JobOfferFilterSerializer
 from .filters import JobOfferFilter
 from .email_service import SendEmailJobOfferNewApplication
 from datetime import datetime
+from .tasks import send_matchmaking_email
+from django.db import transaction
 
 
 class JobOfferDetail(generics.UpdateAPIView):
@@ -21,16 +23,18 @@ class JobOfferDetail(generics.UpdateAPIView):
     """
     queryset = JobOffer.objects.all()
     serializer_class = JobOfferSerializer
-    permission_classes = [IsEmployer, IsJobOfferCreator]
+    permission_classes = [IsJobOfferCreator]
 
 
 class JobOfferVerification(APIView):
     """
     Approval by the admin of the job offer entered by employers
+    If a user with the required skills is found, an email with an offer will be sent to him
     """
     permission_classes = [IsAdminUser]
 
-    def get(self, request, pk) -> Response:
+    @transaction.atomic
+    def get(self, request: Request, pk) -> Response:
         timestamp = float(request.query_params.get('expiration_timestamp', 0))
         timestamp_now = self._get_timestamp()
 
@@ -43,6 +47,13 @@ class JobOfferVerification(APIView):
 
         job_offer.verified = True
         job_offer.save()
+
+        data = {
+            'job_offer_id': pk,
+        }
+
+        send_matchmaking_email.delay(data)
+
         message = {'message': f'The job offer titled - {title} - has been verified'}
         return Response(message, status=status.HTTP_200_OK)
 
@@ -62,7 +73,7 @@ class JobOfferListView(generics.ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = JobOfferFilter
 
-    def get_queryset(self):
+    def get_queryset(self) -> JobOffer:
         """
         The function returns offers that have valid subscriptions
         """
@@ -72,7 +83,7 @@ class JobOfferListView(generics.ListAPIView):
             verified=True
         )
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Response:
         """
         Offers will be sorted based on bids before sending the request
         """
@@ -106,7 +117,9 @@ class JobOfferApplication(APIView):
             'job_offer_title': job_offer_instance.title
             }
 
-        SendEmailJobOfferNewApplication(data).send_email()
+        send_email_instance = SendEmailJobOfferNewApplication()
+        send_email_instance.email_data = data
+        send_email_instance.send_email()
 
         response = {'message': 'Application for the position have been submitted'}
 

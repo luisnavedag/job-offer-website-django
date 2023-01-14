@@ -35,7 +35,6 @@ def test_updating_job_offer(
     url = reverse('job-offer-detail', args=[pk])
 
     response = api_client_with_credentials.put(url, data=job_offer_data, format='json')
-    print(response.data)
     assert response.status_code == 200
     assert response.data['title'] == job_offer_data['title']
     assert response.data['cities'][0]['name'] == job_offer_data['cities'][0]['name']
