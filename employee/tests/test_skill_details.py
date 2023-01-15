@@ -17,16 +17,16 @@ class APIDetailSkillTestCase(APITestCase):
             password='123',
         )
         self.client.force_authenticate(self.user)
-        self.url = reverse('skill-detail', kwargs={'pk': 1})
 
     def test_get_skill(self):
         """
         Test getting skill for entered pk
         """
         skill = "Django"
-        Skill.objects.create(name=skill)
+        instance = Skill.objects.create(name=skill)
+        url = reverse('skill-detail', kwargs={'pk': instance.id})
 
-        response = self.client.get(self.url, content_type='application/json')
+        response = self.client.get(url, content_type='application/json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], skill)
@@ -36,16 +36,17 @@ class APIDetailSkillTestCase(APITestCase):
         Test updating skill for entered pk
         """
         skill = "Django"
-        Skill.objects.create(name=skill)
+        instance = Skill.objects.create(name=skill)
+        url = reverse('skill-detail', kwargs={'pk': instance.id})
 
         updated_skill = "Flask"
 
         payload = json.dumps({
             'name': updated_skill
         })
-        response = self.client.put(self.url, payload, content_type='application/json')
+        response = self.client.put(url, payload, content_type='application/json')
 
-        entered_skill = Skill.objects.get(id=1)
+        entered_skill = Skill.objects.get(id=instance.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], updated_skill)
@@ -56,9 +57,10 @@ class APIDetailSkillTestCase(APITestCase):
         Test deleting skill for entered pk
         """
         skill = "Django"
-        Skill.objects.create(name=skill)
+        instance = Skill.objects.create(name=skill)
+        url = reverse('skill-detail', kwargs={'pk': instance.id})
 
-        response = self.client.delete(self.url, content_type='application/json')
+        response = self.client.delete(url, content_type='application/json')
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(Skill.objects.all()), 0)

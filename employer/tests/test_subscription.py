@@ -4,6 +4,7 @@ from employer.models import Employer
 from employee.models import Employee
 import pytest
 from datetime import date, timedelta
+from employer.models import Subscription
 
 
 @pytest.mark.django_db
@@ -170,14 +171,10 @@ def test_default_ordering_data(create_subscriptions: APIClient):
     response = create_subscriptions.get(url)
 
     assert response.status_code == 200
-    assert response.data[0]['last_day'] == get_date(30)
-    assert response.data[1]['last_day'] == get_date(32)
-    assert response.data[2]['last_day'] == get_date(33)
-    assert response.data[3]['last_day'] == get_date(42)
-    assert response.data[4]['last_day'] == get_date(53)
-    assert response.data[5]['last_day'] == get_date(63)
-    assert response.data[6]['last_day'] == get_date(75)
-    assert response.data[7]['last_day'] == get_date(90)
+
+    dates = [30, 32, 33, 42, 53, 63, 75, 90]
+    assert all([True if response.data[counter]['last_day'] == get_date(date_) else False
+                for counter, date_ in enumerate(dates)])
 
 
 def test_ordering_by_created_field(create_subscriptions: APIClient):
@@ -186,16 +183,11 @@ def test_ordering_by_created_field(create_subscriptions: APIClient):
     """
     url = reverse('subscriptions') + '?ordering=created'
     response = create_subscriptions.get(url)
+    subscriptions = [item.id for item in Subscription.objects.all()]
 
     assert response.status_code == 200
-    assert response.data[0]['id'] == 1
-    assert response.data[1]['id'] == 2
-    assert response.data[2]['id'] == 3
-    assert response.data[3]['id'] == 4
-    assert response.data[4]['id'] == 5
-    assert response.data[5]['id'] == 6
-    assert response.data[6]['id'] == 7
-    assert response.data[7]['id'] == 8
+
+    assert all([True if response.data[counter]['id'] == item else False for counter, item in enumerate(subscriptions)])
 
 
 def test_ordering_by_type_field(create_subscriptions: APIClient):
@@ -206,14 +198,9 @@ def test_ordering_by_type_field(create_subscriptions: APIClient):
     response = create_subscriptions.get(url)
 
     assert response.status_code == 200
-    assert response.data[0]['type'] == 'Business'
-    assert response.data[1]['type'] == 'Business'
-    assert response.data[2]['type'] == 'Enterprise'
-    assert response.data[3]['type'] == 'Pro'
-    assert response.data[4]['type'] == 'Pro'
-    assert response.data[5]['type'] == 'Standard'
-    assert response.data[6]['type'] == 'Standard'
-    assert response.data[7]['type'] == 'Standard'
+
+    types = ['Business', 'Business', 'Enterprise', 'Pro', 'Pro', 'Standard', 'Standard', 'Standard']
+    assert all([True if response.data[counter]['type'] == item else False for counter, item in enumerate(types)])
 
 
 def test_filtering_by_type_field_as_business(create_subscriptions: APIClient):
@@ -251,14 +238,14 @@ def create_subscriptions(api_client_with_credentials: APIClient, create_employer
     """
     url = reverse('subscription')
     data = [
-        {'type': 'Standard', 'first_day': get_date(60)},
-        {'type': 'Pro', 'first_day': get_date(23)},
-        {'type': 'Business', 'first_day': get_date(33)},
-        {'type': 'Standard', 'first_day': get_date(0)},
-        {'type': 'Business', 'first_day': get_date(3)},
-        {'type': 'Pro', 'first_day': get_date(2)},
-        {'type': 'Enterprise', 'first_day': get_date(12)},
-        {'type': 'Standard', 'first_day': get_date(45)}
+        {'id': 1, 'type': 'Standard', 'first_day': get_date(60)},
+        {'id': 2, 'type': 'Pro', 'first_day': get_date(23)},
+        {'id': 3, 'type': 'Business', 'first_day': get_date(33)},
+        {'id': 4, 'type': 'Standard', 'first_day': get_date(0)},
+        {'id': 5, 'type': 'Business', 'first_day': get_date(3)},
+        {'id': 6, 'type': 'Pro', 'first_day': get_date(2)},
+        {'id': 7, 'type': 'Enterprise', 'first_day': get_date(12)},
+        {'id': 8, 'type': 'Standard', 'first_day': get_date(45)}
     ]
     [api_client_with_credentials.post(url, data=data[x]) for x, _ in enumerate(data)]
     return api_client_with_credentials

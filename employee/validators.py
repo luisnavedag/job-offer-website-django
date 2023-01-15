@@ -1,7 +1,5 @@
 from rest_framework import serializers
 import re
-from employer.models import Employer
-from icecream import ic
 
 
 def validate_city(city: str) -> str:

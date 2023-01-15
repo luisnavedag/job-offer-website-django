@@ -3,7 +3,6 @@ from rest_framework import status
 from user.models import User
 from employee.models import Skill, Employee
 from employer.models import Employer
-from icecream import ic
 
 
 class APIFilterSearchEmployeesTestCase(APITestCase):

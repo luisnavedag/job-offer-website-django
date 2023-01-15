@@ -21,6 +21,8 @@ flower = "*"
 celery = "*"
 python-decouple = "*"
 faker = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 

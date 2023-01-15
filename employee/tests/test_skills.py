@@ -2,7 +2,6 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from user.models import User
 from employee.models import Skill
-from icecream import ic
 
 
 class APIFilterSearchSkillsTestCase(APITestCase):

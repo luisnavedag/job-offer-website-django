@@ -5,19 +5,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      && python manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - .:/webapp
-    ports:
-      - "8000:8000"
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=dbaa1_i7%*3r9-=z-+_mz4r-!qeed@(-a_r(g@k8jo8y3r27%m
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
+    expose:
+      - 8000
     depends_on:
       - redis
+      - db
 
   celery:
     build:
@@ -27,14 +25,10 @@ services:
     volumes:
       - .:/webapp
     environment:
-      - DEBUG=1
-      - SECRET_KEY=dbaa1_i7%*3r9-=z-+_mz4r-!qeed@(-a_r(g@k8jo8y3r27%m
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on:
       - web
-      - redis
 
   redis:
     image: redis:7-alpine
@@ -47,12 +41,33 @@ services:
     ports:
       - "5555:5555"
     environment:
-      - DEBUG=1
-      - SECRET_KEY=dbaa1_i7%*3r9-=z-+_mz4r-!qeed@(-a_r(g@k8jo8y3r27%m
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on:
-      - web
-      - redis
       - celery
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=database1_role
+      - POSTGRES_PASSWORD=database1_password
+      - POSTGRES_DB=database1
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - static:/webapp/static
+      - media:/webapp/media
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static:
+  media:
