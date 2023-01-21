@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'employee',
     'job_offers',
     'user',
-    'API',
+    'api',
     'django_rest_passwordreset',
 ]
 
@@ -151,10 +151,12 @@ MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = 'aa3d6d3ad24950'
-EMAIL_HOST_PASSWORD = '0c8de4f5946030'
-EMAIL_PORT = '2525'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = '587'
+
+EMAIL_USE_TLS = True
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")

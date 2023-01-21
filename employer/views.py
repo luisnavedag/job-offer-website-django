@@ -1,15 +1,12 @@
-from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
-from rest_framework.request import Request
 from rest_framework.filters import OrderingFilter
 from rest_framework.request import Request
-from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from django.db.models.query import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
-from API.permissions import IsEmployer
+from api.permissions import IsEmployer
 from employee.models import Employee
 from .serializers import EmployerSerializer, SubscriptionSerializer
 from .models import Employer, Subscription
@@ -85,5 +82,4 @@ class SubscriptionList(generics.ListAPIView):
     ordering = ['last_day']
 
     def get_queryset(self) -> QuerySet:
-        queryset = Subscription.objects.filter(employer__user=self.request.user)
-        return queryset
+        return Subscription.added_by_logged_in_user(self.request.user)

@@ -35,7 +35,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'city',
             'linkdin',
             'status',
-            'about_yourself'
+            'about_yourself',
+            'accept_matchmaking'
         ]
 
     @transaction.atomic
@@ -66,6 +67,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         instance.linkdin = validated_data.get('linkdin', instance.linkdin)
         instance.status = validated_data.get('status', instance.status)
         instance.about_yourself = validated_data.get('about_yourself', instance.about_yourself)
+        instance.accept_matchmaking = validated_data.get('accept_matchmaking', instance.accept_matchmaking)
         instance.save()
 
         return instance

@@ -1,9 +1,10 @@
+from django.db.models.query import QuerySet
+from user.models import User
 from employee.models import Employee
 from job_offers.models import JobOffer
 from .models import Matchmaking
+from user.email_service.email_service import SendEmail
 from abc import ABC, abstractmethod
-from user.email_service import SendEmail
-from django.db.models.query import QuerySet
 
 
 class PerformMatchmaking(ABC):
@@ -31,13 +32,20 @@ class PerformMatchmaking(ABC):
 
 
 class PerformMatchmakingJobOfferEmployee(PerformMatchmaking):
+    """
+    Perform matchmaking for newly added offers. Email users who have active
+    matchmaking options and have the required skills from the offer
+    """
 
     def perform_matchmaking_for_single_item(self):
         [self.send_email(employee=employee) for employee in self.get_employees_with_required_skills()]
 
     def send_email(self, *args, **kwargs):
         employee = kwargs['employee']
-        self.data.update({'employee': employee})
+        self.data.update({
+            'employee': employee,
+            'email': User.get_user_email_by_employee_id(employee.id)
+        })
 
         self.send_email_obj.email_data = self.data
 

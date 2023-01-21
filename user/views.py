@@ -1,10 +1,11 @@
-from .models import User
-from .serializers import RegisterSerializer, ChangePasswordSerializer, UserSerializer
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
-from .email_service import SendEmailNewUser
 from rest_framework.response import Response
 from rest_framework import status
+from .models import User
+from .serializers import RegisterSerializer, ChangePasswordSerializer, UserSerializer
+from user.email_service.email_service import SendEmailNewUser
+from user.email_service.new_user_form import new_user_email_form
 from datetime import datetime
 
 
@@ -20,7 +21,7 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        send_email_instance = SendEmailNewUser()
+        send_email_instance = SendEmailNewUser(new_user_email_form)
         send_email_instance.email_data = serializer.data
         send_email_instance.send_email()
 

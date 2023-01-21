@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
-from API.permissions import IsEmployer, IsEmployee
+from api.permissions import IsEmployer, IsEmployee
 from employer.models import Employer
 from job_offers.models import JobOffer
 from job_offers.serializers import JobOfferSerializer
@@ -147,4 +147,4 @@ class EmployeeAplicationsListView(generics.ListAPIView):
         """
         The function returns job offers for which the logged-in user has applied
         """
-        return JobOffer.objects.filter(application__employee__user=self.request.user)
+        return JobOffer.added_by_logged_in_user(self.request.user)

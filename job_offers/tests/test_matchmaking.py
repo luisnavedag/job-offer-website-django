@@ -2,8 +2,9 @@ import pytest
 from rest_framework.test import APIClient
 from datetime import datetime, timedelta
 from job_offers.matchmaking_service import PerformMatchmakingJobOfferEmployee
-from job_offers.email_service import SendEmailJobOfferMatchmaking
+from job_offers.email_service.email_service import SendEmailJobOfferMatchmaking
 from job_offers.models import JobOffer
+from job_offers.email_service.job_offer_matchmaking_form import job_offer_matchmaking_email_form
 from .data_for_tests import create_employees, create_data
 
 
@@ -23,7 +24,7 @@ def test_matchmaking_for_skills_python_pytest(
     data = {
         'job_offer_id': JobOffer.objects.get(title='Python Programer').id,
     }
-    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking())
+    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking(job_offer_matchmaking_email_form))
     employees = instance.get_employees_with_required_skills()
 
     assert len(employees) == 2
@@ -41,7 +42,7 @@ def test_matchmaking_for_skills_google_ads_google_analytics(
     data = {
         'job_offer_id': JobOffer.objects.get(title='SEM Planner').id,
     }
-    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking())
+    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking(job_offer_matchmaking_email_form))
     employees = instance.get_employees_with_required_skills()
 
     assert len(employees) == 1
@@ -60,7 +61,7 @@ def test_matchmaking_for_skill_ms_office(
     data = {
         'job_offer_id': JobOffer.objects.get(title='Recruitment Specialist').id,
     }
-    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking())
+    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking(job_offer_matchmaking_email_form))
     employees = instance.get_employees_with_required_skills()
 
     assert len(employees) == 2
@@ -78,7 +79,7 @@ def test_matchmaking_for_skill_java_and_sql(
     data = {
         'job_offer_id': JobOffer.objects.get(title='Java Programmer').id,
     }
-    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking())
+    instance = PerformMatchmakingJobOfferEmployee(data, SendEmailJobOfferMatchmaking(job_offer_matchmaking_email_form))
     employees = instance.get_employees_with_required_skills()
 
     assert len(employees) == 3

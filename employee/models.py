@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from API.models import CommonItem
+from api.models import CommonItem
 
 
 class Employee(models.Model):
@@ -35,6 +35,9 @@ class Employee(models.Model):
     status = models.CharField(choices=STATUS, max_length=100, null=True)
     about_yourself = models.TextField(null=True, blank=True)
     accept_matchmaking = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user
 
 
 class Skill(CommonItem):

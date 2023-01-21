@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.db.models import Model
 from django.db import transaction
-from .email_service import SendEmailJobOfferVerification
+from job_offers.email_service.email_service import SendEmailJobOfferVerification
 from job_offers.models import JobOffer, City
+from job_offers.email_service.job_offer_verification_form import job_offer_verification_email_form
 from employee.serializers import SkillSerializer
 from employee.models import Skill
 from employer.offer_raise_service import *
@@ -90,7 +91,7 @@ class JobOfferSerializer(serializers.ModelSerializer):
 
         instance.save()
 
-        send_email_instance = SendEmailJobOfferVerification()
+        send_email_instance = SendEmailJobOfferVerification(job_offer_verification_email_form)
         send_email_instance.email_data = instance.__dict__
         send_email_instance.send_email()
 

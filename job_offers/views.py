@@ -2,19 +2,20 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from API.permissions import IsEmployer, IsJobOfferCreator, IsEmployee
+from rest_framework.request import Request
+from api.permissions import IsJobOfferCreator, IsEmployee
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.request import Request
+from django.db import transaction
 from employer.models import Subscription
 from employee.models import Employee
 from .models import JobOffer, Application
 from .serializers import JobOfferSerializer, JobOfferFilterSerializer
 from .filters import JobOfferFilter
-from .email_service import SendEmailJobOfferNewApplication
-from datetime import datetime
 from .tasks import send_matchmaking_email
-from django.db import transaction
+from job_offers.email_service.email_service import SendEmailJobOfferNewApplication
+from job_offers.email_service.job_offer_new_application_form import job_offer_new_application_email_form
+from datetime import datetime
 
 
 class JobOfferDetail(generics.UpdateAPIView):
@@ -117,7 +118,7 @@ class JobOfferApplication(APIView):
             'job_offer_title': job_offer_instance.title
             }
 
-        send_email_instance = SendEmailJobOfferNewApplication()
+        send_email_instance = SendEmailJobOfferNewApplication(job_offer_new_application_email_form)
         send_email_instance.email_data = data
         send_email_instance.send_email()
 

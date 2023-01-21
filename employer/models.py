@@ -15,6 +15,9 @@ class Employer(models.Model):
     class Meta:
         unique_together = ['website', 'user']
 
+    def __str__(self):
+        return self.user
+
 
 class Payment(models.Model):
     STATUS = (
@@ -27,6 +30,9 @@ class Payment(models.Model):
     status = models.CharField(choices=STATUS, max_length=100, null=False, blank=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.amount} {self.status}'
 
 
 class Subscription(models.Model):
@@ -51,9 +57,16 @@ class Subscription(models.Model):
     first_day = models.DateField()
     last_day = models.DateField(blank=True)
 
+    def __str__(self):
+        return f'{self.type}'
+
     @staticmethod
     def get_valid_subscriptions() -> QuerySet:
         return Subscription.objects.filter(
             first_day__gte=date.today() - timedelta(days=30),
             first_day__lte=date.today()
         )
+
+    @staticmethod
+    def added_by_logged_in_user(user) -> QuerySet:
+        return Subscription.objects.filter(employer__user=user)

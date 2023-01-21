@@ -90,7 +90,7 @@ def test_updating_job_offer_by_different_user_than_author(
 @pytest.fixture
 def job_offer_data() -> dict[str, any]:
     """
-    Sample data to check the correct operation of the API for Job Offer
+    Sample data to check the correct operation of the api for Job Offer
     """
     return {
         'title': 'Python programmer',
