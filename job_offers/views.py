@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from api.permissions import IsJobOfferCreator, IsEmployee
+from general_utils.permissions import IsJobOfferCreator, IsEmployee
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction

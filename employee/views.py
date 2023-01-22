@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
-from api.permissions import IsEmployer, IsEmployee
+from general_utils.permissions import IsEmployer, IsEmployee
 from employer.models import Employer
 from job_offers.models import JobOffer
 from job_offers.serializers import JobOfferSerializer

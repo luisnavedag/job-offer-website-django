@@ -1,7 +1,7 @@
 from rest_framework.reverse import reverse
 from django.core.mail import EmailMultiAlternatives
-from api.email_service.email_service import SendEmail
-from api.url_service import get_full_url
+from general_utils.email_service.email_service import SendEmail
+from general_utils.url_service import get_full_url
 from pathlib import Path
 import datetime
 

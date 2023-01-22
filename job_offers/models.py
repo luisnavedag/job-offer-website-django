@@ -1,6 +1,6 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from api.models import CommonItem
+from general_utils.models import CommonItem
 from employee.models import Employee
 
 

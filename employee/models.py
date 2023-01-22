@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from api.models import CommonItem
+from general_utils.models import CommonItem
 
 
 class Employee(models.Model):

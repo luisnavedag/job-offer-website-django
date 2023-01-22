@@ -1,4 +1,4 @@
-from api.email_service.email_base_form import base_email_form
+from general_utils.email_service.email_base_form import base_email_form
 
 
 @base_email_form

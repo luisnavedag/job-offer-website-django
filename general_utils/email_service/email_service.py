@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Callable
 from abc import ABC, abstractmethod
 
-LOGO_PATH = r"api/email_service/static/job-search.png"
+LOGO_PATH = r"general_utils/email_service/static/job-search.png"
 
 
 class SendEmail(ABC):

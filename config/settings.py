@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'employee',
     'job_offers',
     'user',
-    'api',
+    'general_utils',
     'django_rest_passwordreset',
 ]
 

@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from django.shortcuts import get_object_or_404
 from django.db.models.query import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
-from api.permissions import IsEmployer
+from general_utils.permissions import IsEmployer
 from employee.models import Employee
 from .serializers import EmployerSerializer, SubscriptionSerializer
 from .models import Employer, Subscription
