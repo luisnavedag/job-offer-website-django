@@ -35,12 +35,12 @@ class EmployeeDetail(APIView):
     """
     Operations on the employee profile
     """
-    def get(self, request: Request, pk: int) -> Response:
+    def get(self, request: Request, pk: str) -> Response:
         employee = self.get_object(self)
         serializer = EmployeeSerializer(employee)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request: Request, pk: int) -> Response:
+    def put(self, request: Request, pk: str) -> Response:
         employee = self.get_object(self)
 
         serializer = EmployeeSerializer(employee, data=request.data)
@@ -49,7 +49,7 @@ class EmployeeDetail(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request: Request, pk: int) -> Response:
+    def delete(self, request: Request, pk: str) -> Response:
         employee = self.get_object(self)
         employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -132,7 +132,7 @@ class SkillListView(generics.ListAPIView):
 
 class EmployeeAplicationsListView(generics.ListAPIView):
     """
-    Returns information about all applications of the logged in user
+    Returns information about all applications of the logged-in user
     """
 
     permission_classes = [IsEmployee]
